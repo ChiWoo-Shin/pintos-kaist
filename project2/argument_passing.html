@@ -1,0 +1,927 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Argument Passing · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="user_memory.html" />
+    
+    
+    <link rel="prev" href="introduction.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">Introduction</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../introduction/getting_started.html">
+            
+                <a href="../introduction/getting_started.html">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../introduction/grading.html">
+            
+                <a href="../introduction/grading.html">
+            
+                    
+                    Grading
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../introduction/legal_and_ethical_issues.html">
+            
+                <a href="../introduction/legal_and_ethical_issues.html">
+            
+                    
+                    Legal and Ethical Issues
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project1: Threads</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../project1/introduction.html">
+            
+                <a href="../project1/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../project1/alarm_clock.html">
+            
+                <a href="../project1/alarm_clock.html">
+            
+                    
+                    Alarm Clock
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../project1/priority_scheduling.html">
+            
+                <a href="../project1/priority_scheduling.html">
+            
+                    
+                    Priority Scheduling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="../project1/advanced_scheduler.html">
+            
+                <a href="../project1/advanced_scheduler.html">
+            
+                    
+                    Advanced Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="../project1/FAQ.html">
+            
+                <a href="../project1/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project2: User Programs</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="introduction.html">
+            
+                <a href="introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="3.2" data-path="argument_passing.html">
+            
+                <a href="argument_passing.html">
+            
+                    
+                    Argument Passing
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="user_memory.html">
+            
+                <a href="user_memory.html">
+            
+                    
+                    User Memory
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="system_call.html">
+            
+                <a href="system_call.html">
+            
+                    
+                    System Calls
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="process_termination.html">
+            
+                <a href="process_termination.html">
+            
+                    
+                    Process Termination Messages
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="deny_write.html">
+            
+                <a href="deny_write.html">
+            
+                    
+                    Denying Writes to Executables
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.7" data-path="dup.html">
+            
+                <a href="dup.html">
+            
+                    
+                    Extend File Descriptor (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.8" data-path="FAQ.html">
+            
+                <a href="FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project3: Virtual Memory</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="../project3/introduction.html">
+            
+                <a href="../project3/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="../project3/vm_management.html">
+            
+                <a href="../project3/vm_management.html">
+            
+                    
+                    Memory Management
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="../project3/anon.html">
+            
+                <a href="../project3/anon.html">
+            
+                    
+                    Anonymous Page
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="../project3/stack_growth.html">
+            
+                <a href="../project3/stack_growth.html">
+            
+                    
+                    Stack Growth
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="../project3/memory_mapped_files.html">
+            
+                <a href="../project3/memory_mapped_files.html">
+            
+                    
+                    Memory Mapped Files
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="../project3/swapping.html">
+            
+                <a href="../project3/swapping.html">
+            
+                    
+                    Swap In/Out
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="../project3/cow.html">
+            
+                <a href="../project3/cow.html">
+            
+                    
+                    Copy-on-Write (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8" data-path="../project3/FAQ.html">
+            
+                <a href="../project3/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project4: File System</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="../project4/introduction.html">
+            
+                <a href="../project4/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="../project4/indexed_and_extensible_files.html">
+            
+                <a href="../project4/indexed_and_extensible_files.html">
+            
+                    
+                    Indexed and Extensible Files
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="../project4/subdirectories.html">
+            
+                <a href="../project4/subdirectories.html">
+            
+                    
+                    Subdirectories and Soft Links
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="../project4/buffer_cache.html">
+            
+                <a href="../project4/buffer_cache.html">
+            
+                    
+                    Buffer Cache (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5" data-path="../project4/synchronization.html">
+            
+                <a href="../project4/synchronization.html">
+            
+                    
+                    Synchronization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6" data-path="../project4/FAQ.html">
+            
+                <a href="../project4/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Appendix</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="../appendix/threads.html">
+            
+                <a href="../appendix/threads.html">
+            
+                    
+                    Threads
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="../appendix/synchronization.html">
+            
+                <a href="../appendix/synchronization.html">
+            
+                    
+                    Synchronization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.3" data-path="../appendix/memory_allocation.html">
+            
+                <a href="../appendix/memory_allocation.html">
+            
+                    
+                    Memory Allocation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.4" data-path="../appendix/virtual_address.html">
+            
+                <a href="../appendix/virtual_address.html">
+            
+                    
+                    Virtual Address
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.5" data-path="../appendix/page_table.html">
+            
+                <a href="../appendix/page_table.html">
+            
+                    
+                    Page Table
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.6" data-path="../appendix/debugging_tools.html">
+            
+                <a href="../appendix/debugging_tools.html">
+            
+                    
+                    Debugging Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.7" data-path="../appendix/development_tools.html">
+            
+                <a href="../appendix/development_tools.html">
+            
+                    
+                    Development Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.8" data-path="../appendix/hash_table.html">
+            
+                <a href="../appendix/hash_table.html">
+            
+                    
+                    Hash Table
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >Argument Passing</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h3 id="argument-passing">Argument Passing</h3>
+<p><strong>Setup the argument for user program in <code>process_exec()</code></strong></p>
+<h4 id="x86-64-calling-convention">x86-64 Calling Convention</h4>
+<p>This section summarizes important points of the convention used for normal
+function calls on 64-bit x86-64 implementations of Unix. Some details are
+omitted for brevity. For more detail, you can refer
+<a href="https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI" target="_blank">System V AMD64 ABI</a>.</p>
+<p>The calling convention works like this:</p>
+<ol>
+<li>User-level applications use as integer registers for passing the sequence
+<code>%rdi</code>, <code>%rsi</code>, <code>%rdx</code>, <code>%rcx</code>, <code>%r8</code> and <code>%r9</code>.</li>
+<li>The caller pushes the address of its next instruction (the return address) on
+the stack and jumps to the first instruction of the callee. A single x86-64
+instruction, <code>CALL</code>, does both.</li>
+<li>The callee executes.</li>
+<li>If the callee has a return value, it stores it into register RAX.</li>
+<li>The callee returns by popping the return address from the stack and jumping
+to the location it specifies, using the x86-64 <code>RET</code> instruction.</li>
+</ol>
+<p>Consider a function <code>f()</code> that takes three int arguments. This diagram shows a
+sample stack frame and register state as seen by the callee at the beginning of
+step 3 above, supposing that <code>f()</code> is invoked as <code>f(1, 2, 3)</code>.
+The initial stack address is arbitrary:</p>
+<pre><code>                             +----------------+
+stack pointer --&gt; 0x4747fe70 | return address |
+                             +----------------+
+RDI: 0x0000000000000001 | RSI: 0x0000000000000002 | RDX: 0x0000000000000003
+</code></pre><h4 id="program-startup-details">Program Startup Details</h4>
+<p>The Pintos C library for user programs designates <code>_start()</code>, in
+<code>lib/user/entry.c</code>, as the entry point for user programs. This function is a
+wrapper around <code>main()</code> that calls <code>exit()</code> if <code>main()</code> returns:</p>
+<pre><code class="lang-C"><span class="hljs-keyword">void</span>
+_start (<span class="hljs-keyword">int</span> argc, <span class="hljs-keyword">char</span> *argv[]) {
+    <span class="hljs-built_in">exit</span> (main (argc, argv));
+}
+</code></pre>
+<p>The kernel must put the arguments for the initial function on the register
+before it allows the user program to begin executing. The arguments are passed
+in the same way as the normal calling convention.</p>
+<p>Consider how to handle arguments for the following example command:
+<code>/bin/ls -l foo bar</code>.</p>
+<ol>
+<li><p>Break the command into words: <code>/bin/ls</code>, <code>-l</code>, <code>foo</code>, <code>bar</code>.</p>
+</li>
+<li><p>Place the words at the top of the stack. Order doesn&apos;t matter,
+because they will be referenced through pointers.</p>
+</li>
+<li><p>Push the address of each string plus a null pointer sentinel, on the
+stack, in right-to-left order. These are the elements of argv. The null pointer
+sentinel ensures that <code>argv[argc]</code> is a null pointer, as required by the C
+standard. The order ensures that <code>argv[0]</code> is at the lowest virtual address.
+Word-aligned accesses are faster than unaligned accesses, so for best
+performance round the stack pointer down to a multiple of 8 before the first
+push.</p>
+</li>
+<li><p>Point <code>%rsi</code> to <code>argv</code> (the address of <code>argv[0]</code>) and set <code>%rdi</code> to <code>argc</code>.</p>
+</li>
+<li><p>Finally, push a fake &quot;return address&quot;: although the entry function will never
+return, its stack frame must have the same structure as any other.</p>
+</li>
+</ol>
+<p>The table below shows the state of the stack and the relevant registers right
+before the beginning of the user program.
+Note that the stack grows down.</p>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th>Name</th>
+<th>Data</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x4747fffc</td>
+<td>argv[3][...]</td>
+<td>&apos;bar\0&apos;</td>
+<td>char[4]</td>
+</tr>
+<tr>
+<td>0x4747fff8</td>
+<td>argv[2][...]</td>
+<td>&apos;foo\0&apos;</td>
+<td>char[4]</td>
+</tr>
+<tr>
+<td>0x4747fff5</td>
+<td>argv[1][...]</td>
+<td>&apos;-l\0&apos;</td>
+<td>char[3]</td>
+</tr>
+<tr>
+<td>0x4747ffed</td>
+<td>argv[0][...]</td>
+<td>&apos;/bin/ls\0&apos;</td>
+<td>char[8]</td>
+</tr>
+<tr>
+<td>0x4747ffe8</td>
+<td>word-align</td>
+<td>0</td>
+<td>uint8_t[]</td>
+</tr>
+<tr>
+<td>0x4747ffe0</td>
+<td>argv[4]</td>
+<td>0</td>
+<td>char *</td>
+</tr>
+<tr>
+<td>0x4747ffd8</td>
+<td>argv[3]</td>
+<td>0x4747fffc</td>
+<td>char *</td>
+</tr>
+<tr>
+<td>0x4747ffd0</td>
+<td>argv[2]</td>
+<td>0x4747fff8</td>
+<td>char *</td>
+</tr>
+<tr>
+<td>0x4747ffc8</td>
+<td>argv[1]</td>
+<td>0x4747fff5</td>
+<td>char *</td>
+</tr>
+<tr>
+<td>0x4747ffc0</td>
+<td>argv[0]</td>
+<td>0x4747ffed</td>
+<td>char *</td>
+</tr>
+<tr>
+<td>0x4747ffb8</td>
+<td>return address</td>
+<td>0</td>
+<td>void (*) ()</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>RDI: 4 | RSI: 0x4747ffc0</p>
+</blockquote>
+<p>In this example, the stack pointer would be initialized to <code>0x4747ffb8</code>
+As shown above, your code should start the stack at the <code>USER_STACK</code>, which is
+defined in <code>include/threads/vaddr.h</code>.</p>
+<p>You may find the non-standard <code>hex_dump()</code> function, declared in <code>&lt;stdio.h&gt;</code>,
+useful for debugging your argument passing code.</p>
+<h4 id="implement-the-argument-passing">Implement the argument passing.</h4>
+<p>Currently, <code>process_exec()</code> does not support passing arguments to new
+processes. Implement this functionality, by extending <code>process_exec()</code> so
+that instead of simply taking a program file name as its argument, it divides it
+into words at spaces. The first word is the program name, the second word is the
+first argument, and so on. That is, <code>process_exec(&quot;grep foo bar&quot;)</code> should run
+grep passing two arguments foo and bar.</p>
+<p>Within a command line, multiple spaces are equivalent to a single space, so that
+<code>process_exec(&quot;grep foo bar&quot;)</code> is equivalent to our original example. You can
+impose a reasonable limit on the length of the command line arguments. For
+example, you could limit the arguments to those that will fit in a single page
+(4 kB). (There is an unrelated limit of 128 bytes on command-line arguments that
+the pintos utility can pass to the kernel.)</p>
+<p>You can parse argument strings any way you like. If you&apos;re lost, look at
+<code>strtok_r()</code>, prototyped in <code>include/lib/string.h</code> and implemented with thorough
+comments in <code>lib/string.c</code>. You can find more about it by looking at the man
+page (run <code>man strtok_r</code> at the prompt).</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page: Introduction">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="user_memory.html" class="navigation navigation-next " aria-label="Next page: User Memory">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Argument Passing","level":"3.2","depth":1,"next":{"title":"User Memory","level":"3.3","depth":1,"path":"project2/user_memory.md","ref":"project2/user_memory.md","articles":[]},"previous":{"title":"Introduction","level":"3.1","depth":1,"path":"project2/introduction.md","ref":"project2/introduction.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"project2/argument_passing.md","mtime":"2022-05-23T14:07:34.340Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-05-23T14:13:22.147Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

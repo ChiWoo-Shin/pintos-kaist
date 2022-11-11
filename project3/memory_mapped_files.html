@@ -1,0 +1,846 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Memory Mapped Files · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="swapping.html" />
+    
+    
+    <link rel="prev" href="stack_growth.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">Introduction</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../introduction/getting_started.html">
+            
+                <a href="../introduction/getting_started.html">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../introduction/grading.html">
+            
+                <a href="../introduction/grading.html">
+            
+                    
+                    Grading
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../introduction/legal_and_ethical_issues.html">
+            
+                <a href="../introduction/legal_and_ethical_issues.html">
+            
+                    
+                    Legal and Ethical Issues
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project1: Threads</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../project1/introduction.html">
+            
+                <a href="../project1/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../project1/alarm_clock.html">
+            
+                <a href="../project1/alarm_clock.html">
+            
+                    
+                    Alarm Clock
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../project1/priority_scheduling.html">
+            
+                <a href="../project1/priority_scheduling.html">
+            
+                    
+                    Priority Scheduling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="../project1/advanced_scheduler.html">
+            
+                <a href="../project1/advanced_scheduler.html">
+            
+                    
+                    Advanced Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="../project1/FAQ.html">
+            
+                <a href="../project1/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project2: User Programs</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../project2/introduction.html">
+            
+                <a href="../project2/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="../project2/argument_passing.html">
+            
+                <a href="../project2/argument_passing.html">
+            
+                    
+                    Argument Passing
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="../project2/user_memory.html">
+            
+                <a href="../project2/user_memory.html">
+            
+                    
+                    User Memory
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="../project2/system_call.html">
+            
+                <a href="../project2/system_call.html">
+            
+                    
+                    System Calls
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="../project2/process_termination.html">
+            
+                <a href="../project2/process_termination.html">
+            
+                    
+                    Process Termination Messages
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="../project2/deny_write.html">
+            
+                <a href="../project2/deny_write.html">
+            
+                    
+                    Denying Writes to Executables
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.7" data-path="../project2/dup.html">
+            
+                <a href="../project2/dup.html">
+            
+                    
+                    Extend File Descriptor (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.8" data-path="../project2/FAQ.html">
+            
+                <a href="../project2/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project3: Virtual Memory</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="introduction.html">
+            
+                <a href="introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="vm_management.html">
+            
+                <a href="vm_management.html">
+            
+                    
+                    Memory Management
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="anon.html">
+            
+                <a href="anon.html">
+            
+                    
+                    Anonymous Page
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="stack_growth.html">
+            
+                <a href="stack_growth.html">
+            
+                    
+                    Stack Growth
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="4.5" data-path="memory_mapped_files.html">
+            
+                <a href="memory_mapped_files.html">
+            
+                    
+                    Memory Mapped Files
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="swapping.html">
+            
+                <a href="swapping.html">
+            
+                    
+                    Swap In/Out
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="cow.html">
+            
+                <a href="cow.html">
+            
+                    
+                    Copy-on-Write (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8" data-path="FAQ.html">
+            
+                <a href="FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project4: File System</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="../project4/introduction.html">
+            
+                <a href="../project4/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="../project4/indexed_and_extensible_files.html">
+            
+                <a href="../project4/indexed_and_extensible_files.html">
+            
+                    
+                    Indexed and Extensible Files
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="../project4/subdirectories.html">
+            
+                <a href="../project4/subdirectories.html">
+            
+                    
+                    Subdirectories and Soft Links
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="../project4/buffer_cache.html">
+            
+                <a href="../project4/buffer_cache.html">
+            
+                    
+                    Buffer Cache (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5" data-path="../project4/synchronization.html">
+            
+                <a href="../project4/synchronization.html">
+            
+                    
+                    Synchronization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6" data-path="../project4/FAQ.html">
+            
+                <a href="../project4/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Appendix</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="../appendix/threads.html">
+            
+                <a href="../appendix/threads.html">
+            
+                    
+                    Threads
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="../appendix/synchronization.html">
+            
+                <a href="../appendix/synchronization.html">
+            
+                    
+                    Synchronization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.3" data-path="../appendix/memory_allocation.html">
+            
+                <a href="../appendix/memory_allocation.html">
+            
+                    
+                    Memory Allocation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.4" data-path="../appendix/virtual_address.html">
+            
+                <a href="../appendix/virtual_address.html">
+            
+                    
+                    Virtual Address
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.5" data-path="../appendix/page_table.html">
+            
+                <a href="../appendix/page_table.html">
+            
+                    
+                    Page Table
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.6" data-path="../appendix/debugging_tools.html">
+            
+                <a href="../appendix/debugging_tools.html">
+            
+                    
+                    Debugging Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.7" data-path="../appendix/development_tools.html">
+            
+                <a href="../appendix/development_tools.html">
+            
+                    
+                    Development Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.8" data-path="../appendix/hash_table.html">
+            
+                <a href="../appendix/hash_table.html">
+            
+                    
+                    Hash Table
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >Memory Mapped Files</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h3 id="memory-mapped-files">Memory Mapped Files</h3>
+<p>In this section, you will implement memory-mapped pages. Unlike anonymous pages,
+memory-mapped pages are file-backed mappings. The contents in the page mirror
+data in some existing file. If a page fault occurs, a physical frame is
+immediately allocated and the contents are copied into the memory from the file.
+When memory-mapped pages are unmapped or swapped out, any change in the content
+is reflected in the file.</p>
+<h4 id="mmap-and-munmap-system-call"><code>mmap</code> and <code>munmap</code> System Call</h4>
+<p><strong>Implement <code>mmap</code> and <code>munmap</code></strong>, which are the two system calls for memory
+mapped files. Your VM system must load pages lazily in mmap regions and use the
+mmaped file itself as a backing store for the mapping. You should implement and
+use <code>do_mmap</code> and <code>do_munmap</code> defined in <code>vm/file.c</code> to implement these two
+system calls.</p>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">void</span> *<span class="hljs-title">mmap</span> <span class="hljs-params">(<span class="hljs-keyword">void</span> *addr, size_t length, <span class="hljs-keyword">int</span> writable, <span class="hljs-keyword">int</span> fd, off_t offset)</span></span>;
+</code></pre>
+<blockquote>
+<p>Maps <code>length</code> bytes the file open as <code>fd</code> starting from <code>offset</code> byte into the
+process&apos;s virtual address space at <code>addr</code>. The entire file is mapped into
+consecutive virtual pages starting at <code>addr</code>. If the length of the file is not
+a multiple of PGSIZE, then some bytes in the final mapped page &quot;stick out&quot;
+beyond the end of the file. Set these bytes to zero when the page is faulted
+in, and discard them when the page is written back to disk. If successful,
+this function returns the virtual address where the file is mapped. On
+failure, it must return NULL which is not a valid address to map a file.</p>
+</blockquote>
+<p>A call to <code>mmap</code> may fail if the file opened as fd has a length of zero bytes.
+It must fail if addr is not page-aligned or if the range of pages mapped
+overlaps any existing set of mapped pages, including the stack or pages mapped
+at executable load time. In Linux, if <code>addr</code> is NULL, the kernel finds an
+appropriate address at which to create the mapping. For simplicity, you can just
+attempt to mmap at the given <code>addr</code>. Therefore, if <code>addr</code> is 0, it must fail,
+because some Pintos code assumes virtual page 0 is not mapped. Your mmap should
+also fail when <code>length</code> is zero. Finally, the file descriptors representing
+console input and output are not mappable.</p>
+<p>Memory-mapped pages should be also allocated in a lazy manner just like
+anonymous pages. You can use <code>vm_alloc_page_with_initializer</code> or <code>vm_alloc_page</code>
+to make a page object.</p>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">munmap</span> <span class="hljs-params">(<span class="hljs-keyword">void</span> *addr)</span></span>;
+</code></pre>
+<blockquote>
+<p>Unmaps the mapping for the specified address range <code>addr</code>, which must be the
+virtual address returned by a previous call to mmap by the same process that
+has not yet been unmapped.</p>
+</blockquote>
+<p>All mappings are implicitly unmapped when a process exits, whether via <code>exit</code> or
+by any other means. When a mapping is unmapped, whether implicitly or
+explicitly, all pages written to by the process are written back to the file,
+and pages not written must not be. The pages are then removed from the process&apos;s
+list of virtual pages.</p>
+<p>Closing or removing a file does not unmap any of its mappings. Once created, a
+mapping is valid until <code>munmap</code> is called or the process exits, following the
+Unix convention. See <a href="../project2/FAQ.html">Removing an Open File</a> for more
+information. You should use the <code>file_reopen</code> function to obtain a separate and
+independent reference to the file for each of its mappings.</p>
+<p>If two or more processes map the same file, there is no requirement that they
+see consistent data. Unix handles this by making the two mappings share the same
+physical page, and the mmap system call also has an argument allowing the client
+to specify whether the page is shared or private (i.e. copy-on-write).</p>
+<p>You may want to modify <code>vm_file_init</code> and <code>vm_file_initializer</code> in <code>vm/vm.c</code>
+according to your needs.</p>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">vm_file_init</span> <span class="hljs-params">(<span class="hljs-keyword">void</span>)</span></span>;
+</code></pre>
+<blockquote>
+<p>Initializes the file-backed page subsystem. In this function, you can setup
+anything related to the file backed page.</p>
+</blockquote>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">file_backed_initializer</span> <span class="hljs-params">(<span class="hljs-keyword">struct</span> page *page, <span class="hljs-keyword">enum</span> vm_type type, <span class="hljs-keyword">void</span> *kva)</span></span>;
+</code></pre>
+<blockquote>
+<p>Initializes a file-backed page. The function first sets up the handlers for
+file-backed pages in <code>page-&gt;operations</code>. You may want to update some
+information on the page struct, such as the file that is backing the memory.</p>
+</blockquote>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">file_backed_destroy</span> <span class="hljs-params">(<span class="hljs-keyword">struct</span> page *page)</span></span>;
+</code></pre>
+<blockquote>
+<p>Destroys the file backed page by closing the associated file. If the content
+is dirty, make sure you write back the changes into the file. You do not need
+to free the page struct in this function. The caller of <code>file_backed_destroy</code>
+should handle it.</p>
+</blockquote>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="stack_growth.html" class="navigation navigation-prev " aria-label="Previous page: Stack Growth">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="swapping.html" class="navigation navigation-next " aria-label="Next page: Swap In/Out">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Memory Mapped Files","level":"4.5","depth":1,"next":{"title":"Swap In/Out","level":"4.6","depth":1,"path":"project3/swapping.md","ref":"project3/swapping.md","articles":[]},"previous":{"title":"Stack Growth","level":"4.4","depth":1,"path":"project3/stack_growth.md","ref":"project3/stack_growth.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"project3/memory_mapped_files.md","mtime":"2022-05-23T14:07:34.320Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-05-23T14:13:22.147Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

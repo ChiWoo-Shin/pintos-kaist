@@ -1,0 +1,811 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Stack Growth · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="memory_mapped_files.html" />
+    
+    
+    <link rel="prev" href="anon.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">Introduction</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../introduction/getting_started.html">
+            
+                <a href="../introduction/getting_started.html">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../introduction/grading.html">
+            
+                <a href="../introduction/grading.html">
+            
+                    
+                    Grading
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../introduction/legal_and_ethical_issues.html">
+            
+                <a href="../introduction/legal_and_ethical_issues.html">
+            
+                    
+                    Legal and Ethical Issues
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project1: Threads</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../project1/introduction.html">
+            
+                <a href="../project1/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../project1/alarm_clock.html">
+            
+                <a href="../project1/alarm_clock.html">
+            
+                    
+                    Alarm Clock
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../project1/priority_scheduling.html">
+            
+                <a href="../project1/priority_scheduling.html">
+            
+                    
+                    Priority Scheduling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="../project1/advanced_scheduler.html">
+            
+                <a href="../project1/advanced_scheduler.html">
+            
+                    
+                    Advanced Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="../project1/FAQ.html">
+            
+                <a href="../project1/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project2: User Programs</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../project2/introduction.html">
+            
+                <a href="../project2/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="../project2/argument_passing.html">
+            
+                <a href="../project2/argument_passing.html">
+            
+                    
+                    Argument Passing
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="../project2/user_memory.html">
+            
+                <a href="../project2/user_memory.html">
+            
+                    
+                    User Memory
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="../project2/system_call.html">
+            
+                <a href="../project2/system_call.html">
+            
+                    
+                    System Calls
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="../project2/process_termination.html">
+            
+                <a href="../project2/process_termination.html">
+            
+                    
+                    Process Termination Messages
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="../project2/deny_write.html">
+            
+                <a href="../project2/deny_write.html">
+            
+                    
+                    Denying Writes to Executables
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.7" data-path="../project2/dup.html">
+            
+                <a href="../project2/dup.html">
+            
+                    
+                    Extend File Descriptor (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.8" data-path="../project2/FAQ.html">
+            
+                <a href="../project2/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project3: Virtual Memory</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="introduction.html">
+            
+                <a href="introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="vm_management.html">
+            
+                <a href="vm_management.html">
+            
+                    
+                    Memory Management
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="anon.html">
+            
+                <a href="anon.html">
+            
+                    
+                    Anonymous Page
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="4.4" data-path="stack_growth.html">
+            
+                <a href="stack_growth.html">
+            
+                    
+                    Stack Growth
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="memory_mapped_files.html">
+            
+                <a href="memory_mapped_files.html">
+            
+                    
+                    Memory Mapped Files
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="swapping.html">
+            
+                <a href="swapping.html">
+            
+                    
+                    Swap In/Out
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="cow.html">
+            
+                <a href="cow.html">
+            
+                    
+                    Copy-on-Write (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8" data-path="FAQ.html">
+            
+                <a href="FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project4: File System</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="../project4/introduction.html">
+            
+                <a href="../project4/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="../project4/indexed_and_extensible_files.html">
+            
+                <a href="../project4/indexed_and_extensible_files.html">
+            
+                    
+                    Indexed and Extensible Files
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" data-path="../project4/subdirectories.html">
+            
+                <a href="../project4/subdirectories.html">
+            
+                    
+                    Subdirectories and Soft Links
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="../project4/buffer_cache.html">
+            
+                <a href="../project4/buffer_cache.html">
+            
+                    
+                    Buffer Cache (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5" data-path="../project4/synchronization.html">
+            
+                <a href="../project4/synchronization.html">
+            
+                    
+                    Synchronization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6" data-path="../project4/FAQ.html">
+            
+                <a href="../project4/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Appendix</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="../appendix/threads.html">
+            
+                <a href="../appendix/threads.html">
+            
+                    
+                    Threads
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="../appendix/synchronization.html">
+            
+                <a href="../appendix/synchronization.html">
+            
+                    
+                    Synchronization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.3" data-path="../appendix/memory_allocation.html">
+            
+                <a href="../appendix/memory_allocation.html">
+            
+                    
+                    Memory Allocation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.4" data-path="../appendix/virtual_address.html">
+            
+                <a href="../appendix/virtual_address.html">
+            
+                    
+                    Virtual Address
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.5" data-path="../appendix/page_table.html">
+            
+                <a href="../appendix/page_table.html">
+            
+                    
+                    Page Table
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.6" data-path="../appendix/debugging_tools.html">
+            
+                <a href="../appendix/debugging_tools.html">
+            
+                    
+                    Debugging Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.7" data-path="../appendix/development_tools.html">
+            
+                <a href="../appendix/development_tools.html">
+            
+                    
+                    Development Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.8" data-path="../appendix/hash_table.html">
+            
+                <a href="../appendix/hash_table.html">
+            
+                    
+                    Hash Table
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >Stack Growth</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h3 id="stack-growth">Stack Growth</h3>
+<p>In project 2, the stack was a single page starting from the <code>USER_STACK</code>, and
+programs&apos; executions were limited to this size. Now, if the stack grows past its
+current size, we allocate additional pages as necessary.</p>
+<p>Allocate additional pages only if they &quot;appear&quot; to be stack accesses. Devise a
+heuristic that attempts to distinguish stack accesses from other accesses.</p>
+<p>User programs are buggy if they write to the stack below the stack pointer,
+because typical real OSes may interrupt a process at any time to deliver a
+&quot;signal,&quot; which modifies data on the stack. However, the x86-64 PUSH instruction
+checks access permissions before it adjusts the stack pointer, so it may cause a
+page fault 8 bytes below the stack pointer.</p>
+<p>You will need to be able to obtain the current value of the user program&apos;s stack
+pointer. Within a system call or a page fault generated by a user program, you
+can retrieve it from the <code>rsp</code> member of the <code>struct intr_frame</code> passed to
+<code>syscall_handler()</code> or <code>page_fault()</code>, respectively. If you depend on page
+faults to detect invalid memory access, you will need to handle another case,
+where a page fault occurs in the kernel. Since the processor only saves
+the stack pointer when an exception causes a switch from user to kernel mode,
+reading <code>rsp</code> out of the <code>struct intr_frame</code> passed to <code>page_fault()</code> would
+yield an undefined value, not the user stack pointer. You will need to arrange
+another way, such as saving rsp into <code>struct thread</code> on the initial transition
+from user to kernel mode.</p>
+<p><strong>Implement stack growth functionalities.</strong>
+To implement this, you first modify <code>vm_try_handle_fault</code> in <code>vm/vm.c</code> to
+identify the stack growth. After identifying the stack growth, you should make a
+call to <code>vm_stack_growth</code> in <code>vm/vm.c</code> to grow the stack. Implement the
+<code>vm_stack_growth</code>.</p>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">vm_try_handle_fault</span> <span class="hljs-params">(<span class="hljs-keyword">struct</span> intr_frame *f, <span class="hljs-keyword">void</span> *addr,
+    <span class="hljs-keyword">bool</span> user, <span class="hljs-keyword">bool</span> write, <span class="hljs-keyword">bool</span> not_present)</span></span>;
+</code></pre>
+<blockquote>
+<p>This function is called in <code>page_fault</code> in <code>userprog/exception.c</code> while
+handling the page fault exception. In this function, you need to check whether
+the page fault is a valid case for a stack growth or not. If you have confirmed
+that the fault can be handled with a stack growth, call <code>vm_stack_growth</code> with
+the faulted address.</p>
+</blockquote>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">vm_stack_growth</span> <span class="hljs-params">(<span class="hljs-keyword">void</span> *addr)</span></span>;
+</code></pre>
+<blockquote>
+<p>Increases the stack size by allocating one or more anonymous pages so that
+<code>addr</code> is no longer a faulted address. Make sure you round down the <code>addr</code> to
+PGSIZE when handling the allocation.</p>
+</blockquote>
+<p>Most Oses impose some absolute limit on stack size. Some OSes make the limit
+user-adjustable, e.g. with the <code>ulimit</code> command on many Unix systems. On many
+GNU/Linux systems, the default limit is 8 MB. For this project, you should limit
+the stack size to be 1MB at maximum.</p>
+<p>Now, all the stack-growth test cases should be passed.</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="anon.html" class="navigation navigation-prev " aria-label="Previous page: Anonymous Page">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="memory_mapped_files.html" class="navigation navigation-next " aria-label="Next page: Memory Mapped Files">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Stack Growth","level":"4.4","depth":1,"next":{"title":"Memory Mapped Files","level":"4.5","depth":1,"path":"project3/memory_mapped_files.md","ref":"project3/memory_mapped_files.md","articles":[]},"previous":{"title":"Anonymous Page","level":"4.3","depth":1,"path":"project3/anon.md","ref":"project3/anon.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"project3/stack_growth.md","mtime":"2022-05-23T14:07:34.308Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-05-23T14:13:22.147Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

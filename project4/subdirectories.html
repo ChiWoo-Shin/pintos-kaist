@@ -1,0 +1,856 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Subdirectories and Soft Links · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="buffer_cache.html" />
+    
+    
+    <link rel="prev" href="indexed_and_extensible_files.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">Introduction</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../introduction/getting_started.html">
+            
+                <a href="../introduction/getting_started.html">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../introduction/grading.html">
+            
+                <a href="../introduction/grading.html">
+            
+                    
+                    Grading
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../introduction/legal_and_ethical_issues.html">
+            
+                <a href="../introduction/legal_and_ethical_issues.html">
+            
+                    
+                    Legal and Ethical Issues
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project1: Threads</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../project1/introduction.html">
+            
+                <a href="../project1/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../project1/alarm_clock.html">
+            
+                <a href="../project1/alarm_clock.html">
+            
+                    
+                    Alarm Clock
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../project1/priority_scheduling.html">
+            
+                <a href="../project1/priority_scheduling.html">
+            
+                    
+                    Priority Scheduling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="../project1/advanced_scheduler.html">
+            
+                <a href="../project1/advanced_scheduler.html">
+            
+                    
+                    Advanced Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="../project1/FAQ.html">
+            
+                <a href="../project1/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project2: User Programs</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../project2/introduction.html">
+            
+                <a href="../project2/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="../project2/argument_passing.html">
+            
+                <a href="../project2/argument_passing.html">
+            
+                    
+                    Argument Passing
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="../project2/user_memory.html">
+            
+                <a href="../project2/user_memory.html">
+            
+                    
+                    User Memory
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="../project2/system_call.html">
+            
+                <a href="../project2/system_call.html">
+            
+                    
+                    System Calls
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="../project2/process_termination.html">
+            
+                <a href="../project2/process_termination.html">
+            
+                    
+                    Process Termination Messages
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="../project2/deny_write.html">
+            
+                <a href="../project2/deny_write.html">
+            
+                    
+                    Denying Writes to Executables
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.7" data-path="../project2/dup.html">
+            
+                <a href="../project2/dup.html">
+            
+                    
+                    Extend File Descriptor (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.8" data-path="../project2/FAQ.html">
+            
+                <a href="../project2/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project3: Virtual Memory</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="../project3/introduction.html">
+            
+                <a href="../project3/introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="../project3/vm_management.html">
+            
+                <a href="../project3/vm_management.html">
+            
+                    
+                    Memory Management
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="../project3/anon.html">
+            
+                <a href="../project3/anon.html">
+            
+                    
+                    Anonymous Page
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="../project3/stack_growth.html">
+            
+                <a href="../project3/stack_growth.html">
+            
+                    
+                    Stack Growth
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="../project3/memory_mapped_files.html">
+            
+                <a href="../project3/memory_mapped_files.html">
+            
+                    
+                    Memory Mapped Files
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="../project3/swapping.html">
+            
+                <a href="../project3/swapping.html">
+            
+                    
+                    Swap In/Out
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="../project3/cow.html">
+            
+                <a href="../project3/cow.html">
+            
+                    
+                    Copy-on-Write (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8" data-path="../project3/FAQ.html">
+            
+                <a href="../project3/FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Project4: File System</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="introduction.html">
+            
+                <a href="introduction.html">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="indexed_and_extensible_files.html">
+            
+                <a href="indexed_and_extensible_files.html">
+            
+                    
+                    Indexed and Extensible Files
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="5.3" data-path="subdirectories.html">
+            
+                <a href="subdirectories.html">
+            
+                    
+                    Subdirectories and Soft Links
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="buffer_cache.html">
+            
+                <a href="buffer_cache.html">
+            
+                    
+                    Buffer Cache (Extra)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5" data-path="synchronization.html">
+            
+                <a href="synchronization.html">
+            
+                    
+                    Synchronization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6" data-path="FAQ.html">
+            
+                <a href="FAQ.html">
+            
+                    
+                    FAQ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Appendix</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" data-path="../appendix/threads.html">
+            
+                <a href="../appendix/threads.html">
+            
+                    
+                    Threads
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" data-path="../appendix/synchronization.html">
+            
+                <a href="../appendix/synchronization.html">
+            
+                    
+                    Synchronization
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.3" data-path="../appendix/memory_allocation.html">
+            
+                <a href="../appendix/memory_allocation.html">
+            
+                    
+                    Memory Allocation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.4" data-path="../appendix/virtual_address.html">
+            
+                <a href="../appendix/virtual_address.html">
+            
+                    
+                    Virtual Address
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.5" data-path="../appendix/page_table.html">
+            
+                <a href="../appendix/page_table.html">
+            
+                    
+                    Page Table
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.6" data-path="../appendix/debugging_tools.html">
+            
+                <a href="../appendix/debugging_tools.html">
+            
+                    
+                    Debugging Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.7" data-path="../appendix/development_tools.html">
+            
+                <a href="../appendix/development_tools.html">
+            
+                    
+                    Development Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.8" data-path="../appendix/hash_table.html">
+            
+                <a href="../appendix/hash_table.html">
+            
+                    
+                    Hash Table
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >Subdirectories and Soft Links</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h3 id="subdirectories">Subdirectories</h3>
+<p><strong>Implement a hierarchical name space.</strong>
+In the basic file system, all files live in a single directory. Modify this to
+allow directory entries to point to files or to other directories.</p>
+<p>Make sure that directories can expand beyond their original size just as any other file
+can.</p>
+<p>The basic file system has a 14-character limit on file names. You may retain this limit
+for individual file name components, or may extend it, at your option. You must allow full
+path names to be much longer than 14 characters.</p>
+<p><strong>Maintain a separate current directory for each process.</strong>
+At startup, set the root as the initial process&apos;s current directory. When one
+process starts another with the fork system call, the child process inherits its
+parent&apos;s current directory. After that, the two processes&apos; current directories
+are independent, so that either changing its own current directory has no effect
+on the other. (This is why, under Unix, the cd command is a shell built-in, not
+an external program.)</p>
+<p>Update the existing system calls so that, anywhere a file name is provided by
+the caller, an absolute or relative path name may used. The directory separator
+character is forward slash (&apos;/&apos;). You must also support special file names &apos;.&apos;
+and &apos;..&apos;, which have the same meanings as they do in Unix.</p>
+<p>Update the <code>open</code> system call so that it can also open directories. Of the
+existing system calls, only close needs to accept a file descriptor for a
+directory.</p>
+<p>Update the <code>remove</code> system call so that it can delete empty directories (other
+than the root) in addition to regular files. Directories may only be deleted if
+they do not contain any files or subdirectories (other than &apos;.&apos; and &apos;..&apos;). You may decide whether to allow deletion
+of a directory that is open by a process or in use as a processs current working directory.
+If it is allowed, then attempts to open files (including &apos;.&apos; and &apos;..&apos;) or create new files in a
+deleted directory must be disallowed.
+Implement the following new system calls:</p>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">chdir</span> <span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *dir)</span></span>;
+</code></pre>
+<blockquote>
+<p>Changes the current working directory of the process to dir, which may be relative
+or absolute. Returns true if successful, false on failure.</p>
+</blockquote>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">mkdir</span> <span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *dir)</span></span>;
+</code></pre>
+<blockquote>
+<p>Creates the directory named dir, which may be relative or absolute. Returns true if
+successful, false on failure. Fails if dir already exists or if any directory name in dir,
+besides the last, does not already exist. That is, <code>mkdir(&quot;/a/b/c&quot;)</code> succeeds only if <code>/a/b</code> already exists and <code>/a/b/c</code> does not.</p>
+</blockquote>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">readdir</span> <span class="hljs-params">(<span class="hljs-keyword">int</span> fd, <span class="hljs-keyword">char</span> *name)</span></span>;
+</code></pre>
+<blockquote>
+<p>Reads a directory entry from file descriptor fd, which must represent a directory. If
+successful, stores the null-terminated file name in name, which must have room for
+<code>READDIR_MAX_LEN + 1</code> bytes, and returns true. If no entries are left in the directory,
+returns false.</p>
+<p>. and .. should not be returned by <code>readdir</code>.
+If the directory changes while it is open, then it is acceptable for some entries not to
+be read at all or to be read multiple times. Otherwise, each directory entry should
+be read once, in any order.</p>
+<p><code>READDIR_MAX_LEN</code> is defined in <code>lib/user/syscall.h</code>. If your file system supports
+longer file names than the basic file system, you should increase this value from the
+default of 14.</p>
+</blockquote>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">isdir</span> <span class="hljs-params">(<span class="hljs-keyword">int</span> fd)</span></span>;
+</code></pre>
+<blockquote>
+<p>Returns true if fd represents a directory, false if it represents an ordinary file.</p>
+</blockquote>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">inumber</span> <span class="hljs-params">(<span class="hljs-keyword">int</span> fd)</span></span>;
+</code></pre>
+<blockquote>
+<p>Returns the inode number of the inode associated with fd, which may represent an ordinary file or a directory.</p>
+<p>An inode number persistently identifies a file or directory. It is unique during the
+files existence. In Pintos, the sector number of the inode is suitable for use as an inode number.</p>
+</blockquote>
+<h3 id="soft-link">Soft Link</h3>
+<p><strong>Implement the soft link machanism in pintos.</strong>
+Soft link (aka. Symbolic link) is a pseudo file object that refers another file
+or directory. This file contains information of path of pointed file in terms of
+absolute or relative path. Let&apos;s assume the following situation:</p>
+<pre><code>/
+&#x251C;&#x2500;&#x2500; a
+&#x2502;   &#x251C;&#x2500;&#x2500; link1 -&gt; /file
+&#x2502;   &#x2502;
+&#x2502;   &#x2514;&#x2500;&#x2500; link2 -&gt; ../file
+&#x2514;&#x2500;&#x2500; file
+</code></pre><p>The soft-link named <code>link1</code> in <code>/a</code> points <code>/file</code> (as an absolute path),
+and <code>link2</code> in <code>/a</code> points <code>../file</code> (as a relative path).
+Reading the <code>link1</code> or <code>link2</code> file is equivalent to reading <code>/file</code>.</p>
+<hr>
+<pre><code class="lang-C"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">symlink</span> <span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *target, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *linkpath)</span></span>;
+</code></pre>
+<blockquote>
+<p>Creates a symbolic link named linkpath which contains the string target.
+On success, zero is returned. Otherwise, -1 is returned.</p>
+</blockquote>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="indexed_and_extensible_files.html" class="navigation navigation-prev " aria-label="Previous page: Indexed and Extensible Files">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="buffer_cache.html" class="navigation navigation-next " aria-label="Next page: Buffer Cache (Extra)">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Subdirectories and Soft Links","level":"5.3","depth":1,"next":{"title":"Buffer Cache (Extra)","level":"5.4","depth":1,"path":"project4/buffer_cache.md","ref":"project4/buffer_cache.md","articles":[]},"previous":{"title":"Indexed and Extensible Files","level":"5.2","depth":1,"path":"project4/indexed_and_extensible_files.md","ref":"project4/indexed_and_extensible_files.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"project4/subdirectories.md","mtime":"2022-05-23T14:07:34.324Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-05-23T14:13:22.147Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
