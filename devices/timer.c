@@ -19,6 +19,7 @@
 
 /* Number of timer ticks since OS booted. */
 static int64_t ticks;
+struct semaphore sema;
 
 /* Number of loops per timer tick.
    Initialized by timer_calibrate(). */
@@ -28,6 +29,10 @@ static intr_handler_func timer_interrupt;
 static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
+
+/*function for alarm - sleep*/
+void sema_sleep(struct semaphore *sema);
+void sema_awake(struct semaphore *sema, int64_t ticks);
 
 /* Sets up the 8254 Programmable Interval Timer (PIT) to
    interrupt PIT_FREQ times per second, and registers the
@@ -41,6 +46,10 @@ timer_init (void) {
 	outb (0x43, 0x34);    /* CW: counter 0, LSB then MSB, mode 2, binary. */
 	outb (0x40, count & 0xff);
 	outb (0x40, count >> 8);
+
+	sema = *(struct semaphore *)malloc(sizeof(struct semaphore));
+	sema.waiters = *(struct list*)malloc(sizeof(struct list));
+	sema_init(&sema, 1);
 
 	intr_register_ext (0x20, timer_interrupt, "8254 Timer");
 }
@@ -90,11 +99,44 @@ timer_elapsed (int64_t then) {
 /* Suspends execution for approximately TICKS timer ticks. */
 void
 timer_sleep (int64_t ticks) {
-	int64_t start = timer_ticks ();
-
+	int64_t start = timer_ticks ();	
+	
 	ASSERT (intr_get_level () == INTR_ON);
-	while (timer_elapsed (start) < ticks)
-		thread_yield ();
+	
+	thread_current()->tick_s = start + ticks; // 현재 thread의 tick_s에 OS시작부터 자야할 시간까지를 포함한 ticks를 저장
+	while (timer_elapsed (start) < ticks){
+		sema_sleep(&sema); // 현재 thread를 semaphore에 넣고 재운다
+		}
+}
+
+void
+sema_sleep(struct semaphore *sema){
+	enum intr_level old_level; // interrupt를 막기위한 변수
+	
+	old_level = intr_disable (); // interrupt 막기 시작
+	while (sema->value == 0) { // value가 0이라면 이미 다른 누군가가 접근해있는 상태이니
+		list_push_back (&sema->waiters, &thread_current()->elem); // 대기 리스트에 넣고
+		thread_block (); // 현재 thread의 상태를 block으로 전환
+	}
+	sema->value--; // while문에 걸렸거나 혹은 탈출했다면 해당 프로세스에 진입한거니 진입 checke
+	intr_set_level (old_level); // interrupt를 이전 상태로 돌림
+}
+
+void
+sema_awake(struct semaphore *sema, int64_t ticks){ // sema가 깨는 타이밍을 잡는 함수
+	struct thread *temp; // 임시 thread를 선언
+	enum intr_level old_level;
+	size_t waiter_size = list_size(&sema->waiters);
+	
+		for (int i=0 ; i<waiter_size ; i++)	{ // sema->watier 가 비어있지 않다면 즉, 대기하는 애들이 있다면
+			temp = list_entry (list_pop_front (&sema->waiters), struct thread, elem); // 제일 앞에 있는 애를 pop하고 임시 thread로 확장
+			if (temp->tick_s <= ticks){ // 임시 thread의 tick_s이 time_interrupt의 ticks(OS ticks)보다 작다면 이제 깨어나야하니깐
+				thread_unblock(temp); // 깨워주고
+				sema->value++; // 프로세스에서 탈출하니깐 value++ 해줌
+			}
+			else
+				list_push_back(&sema->waiters, &temp->elem);	// ticks의 시간이 안되었다면 다시 list 제일 뒤에 넣어줌
+		}
 }
 
 /* Suspends execution for approximately MS milliseconds. */
@@ -125,7 +167,8 @@ timer_print_stats (void) {
 static void
 timer_interrupt (struct intr_frame *args UNUSED) {
 	ticks++;
-	thread_tick ();
+	thread_tick ();	
+	sema_awake(&sema, ticks);
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
