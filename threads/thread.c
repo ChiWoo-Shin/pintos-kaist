@@ -206,11 +206,11 @@ thread_create (const char *name, int priority,
 
 	/* Add to run queue. */
 	thread_unblock (t);
-
 	/*current creating thread pri vs current running thread pri*/
-	t->priority;
-	int temp = thread_current()->priority;
-
+	if(t->priority > thread_current()->priority){
+		thread_yield();
+		//test_max_priority();
+	}
 	return tid;
 }
 
@@ -245,7 +245,8 @@ thread_unblock (struct thread *t) {
 	old_level = intr_disable ();
 	ASSERT (t->status == THREAD_BLOCKED);
 	// list_push_back (&ready_list, &t->elem);
-	list_insert_ordered (&ready_list, &t->elem,compare_priority, NULL);
+	list_insert_ordered (&ready_list, &t->elem, compare_priority, NULL);
+	
 	t->status = THREAD_READY;
 	intr_set_level (old_level);
 }
@@ -307,38 +308,41 @@ thread_yield (void) {
 	ASSERT (!intr_context ());
 
 	old_level = intr_disable ();
-	if (curr != idle_thread)
-		// list_push_back (&ready_list, &curr->elem);
+	if (curr != idle_thread){
 		list_insert_ordered (&ready_list, &curr->elem,compare_priority, NULL);
+		// list_push_back (&ready_list, &curr->elem);
+	}
 	
-	do_schedule (THREAD_READY);
+	do_schedule(THREAD_READY);
 	intr_set_level (old_level);
 }
 
-void test_max_priority (void){
-	int cur_pri = thread_current()->priority;
-	struct thread *ready_list_max_pri;
-	int64_t ready_list_size = list_size(&ready_list);
-	int max_pri=0;
+// void test_max_priority (void){
+// 	int cur_pri = thread_current()->priority;
+// 	struct thread *ready_list_max_pri;
+	
+// 	if(!list_empty(&ready_list)){
+// 		ready_list_max_pri = list_entry(list_pop_front(&ready_list),struct thread, elem);
+		
+// 		if (ready_list_max_pri->priority > cur_pri){
+// 			thread_yield();
+// 		}
+// 	}
+// }
 
-	ready_list_max_pri = list_entry(&ready_list.head,struct thread, elem);
-	if (max_pri<ready_list_max_pri->priority){
-		max_pri=ready_list_max_pri->priority;
-	}
-	if (max_pri>cur_pri){
-		thread_block();
-		thread_yield();
-	}
-}
-
-bool compare_priority(const struct list_elem *first, const struct list_elem *second, void *aux UNUSED){
-	return list_entry(first,struct thread, elem)->priority<list_entry(second,struct thread, elem)->priority? 1:0;
+bool compare_priority(const struct list_elem *input, const struct list_elem *prev, void *aux UNUSED){
+	return list_entry(input,struct thread, elem)->priority >
+	list_entry(prev,struct thread, elem)->priority;
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
 thread_set_priority (int new_priority) {
+	int rd_pri = list_entry(list_begin(&ready_list),struct thread, elem)->priority;
 	thread_current ()->priority = new_priority;
+	if (rd_pri>thread_current()->priority){
+		thread_yield();
+	}
 }
 
 /* Returns the current thread's priority. */
