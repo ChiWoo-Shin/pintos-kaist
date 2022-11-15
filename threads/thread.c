@@ -207,10 +207,9 @@ thread_create (const char *name, int priority,
 	/* Add to run queue. */
 	thread_unblock (t);
 	/*current creating thread pri vs current running thread pri*/
-	if(t->priority > thread_current()->priority){
-		thread_yield();
-		//test_max_priority();
-	}
+	test_max_priority();
+
+	
 	return tid;
 }
 
@@ -309,7 +308,7 @@ thread_yield (void) {
 
 	old_level = intr_disable ();
 	if (curr != idle_thread){
-		list_insert_ordered (&ready_list, &curr->elem,compare_priority, NULL);
+		list_insert_ordered (&ready_list, &curr->elem, compare_priority, NULL);
 		// list_push_back (&ready_list, &curr->elem);
 	}
 	
@@ -317,18 +316,11 @@ thread_yield (void) {
 	intr_set_level (old_level);
 }
 
-// void test_max_priority (void){
-// 	int cur_pri = thread_current()->priority;
-// 	struct thread *ready_list_max_pri;
-	
-// 	if(!list_empty(&ready_list)){
-// 		ready_list_max_pri = list_entry(list_pop_front(&ready_list),struct thread, elem);
-		
-// 		if (ready_list_max_pri->priority > cur_pri){
-// 			thread_yield();
-// 		}
-// 	}
-// }
+void test_max_priority (void){
+	if(!list_empty(&ready_list))
+		if (list_entry(list_begin(&ready_list),struct thread, elem) -> priority > thread_current()->priority)
+			thread_yield();
+}
 
 bool compare_priority(const struct list_elem *input, const struct list_elem *prev, void *aux UNUSED){
 	return list_entry(input,struct thread, elem)->priority >
@@ -338,11 +330,8 @@ bool compare_priority(const struct list_elem *input, const struct list_elem *pre
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
 thread_set_priority (int new_priority) {
-	int rd_pri = list_entry(list_begin(&ready_list),struct thread, elem)->priority;
 	thread_current ()->priority = new_priority;
-	if (rd_pri>thread_current()->priority){
-		thread_yield();
-	}
+	test_max_priority();
 }
 
 /* Returns the current thread's priority. */
