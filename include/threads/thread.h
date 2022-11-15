@@ -92,6 +92,11 @@ struct thread {
   int priority;              /* Priority. */
   int64_t tick_s;            /* tick info for time check*/
 
+  int init_pri;
+  struct lock *waitLock;
+  struct list dona;
+  struct list_elem dona_elem;
+
   /* Shared between thread.c and synch.c. */
   struct list_elem elem; /* List element. */
 
