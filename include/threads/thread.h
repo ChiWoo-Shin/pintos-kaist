@@ -93,6 +93,11 @@ struct thread {
 	int priority;                       /* Priority. */
 	int64_t tick_s;						/* tick info for time check*/
 
+	int init_pri;
+	struct lock *waitLock;
+	struct list dona;
+	struct list_elem dona_elem;
+
 	/* Shared between thread.c and synch.c. */
 	struct list_elem elem;              /* List element. */
 
@@ -143,7 +148,9 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 void test_max_priority (void);
 bool compare_priority(const struct list_elem *input, const struct list_elem *prev, void *aux UNUSED);
-
+void dona_priority(void);
+void remove_lock(struct lock *lock);
+void refresh_pri(void);
 
 void do_iret (struct intr_frame *tf);
 

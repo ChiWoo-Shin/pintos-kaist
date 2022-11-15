@@ -429,6 +429,10 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->tf.rsp = (uint64_t) t + PGSIZE - sizeof (void *);
 	t->priority = priority;
 	t->magic = THREAD_MAGIC;
+
+	t->init_pri=priority;
+	t->waitLock=NULL;
+	list_init(&t->dona);
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should
@@ -607,4 +611,37 @@ allocate_tid (void) {
 	lock_release (&tid_lock);
 
 	return tid;
+}
+
+void dona_priority(void){
+	struct thread *cur = thread_current();
+
+	for (int i =0; i<8;i++){
+		if(cur->waitLock->holder==NULL) break;
+		if(cur->waitLock->holder->priority > cur->priority) break;
+		cur->waitLock->holder->priority = cur->priority;
+		cur=cur->waitLock->holder;
+	}
+}
+
+void remove_lock(struct lock *lock){
+	struct thread *cur = thread_current();
+	struct thread *temp;
+	struct list_elem *temp_e;
+	
+	// int dona_size = list_size(&cur->dona);
+	// for (int i = 0; i<dona_size; i++){
+	// 	if((temp=list_entry(&cur->dona_elem,struct thread, dona_elem))->waitLock == lock)
+	// 		list_remove(&temp->dona_elem);
+	// 	cur = cur->waitLock->holder;
+	// }
+	
+	for( temp_e =list_begin(&cur->dona); list_end(&cur->dona);temp_e = list_next(temp_e)){
+		if((temp=list_entry(temp_e,struct thread, dona_elem))->waitLock == lock)
+			list_remove(&temp->dona_elem);
+	}
+}
+
+void refresh_pri(void){
+
 }
