@@ -205,7 +205,7 @@ thread_create (const char *name, int priority, thread_func *function,
   thread_unblock (t);
   /*current creating thread pri vs current running thread pri*/
   test_max_priority ();
-
+  
   return tid;
 }
 
@@ -315,7 +315,7 @@ thread_yield (void) {
 void
 test_max_priority (void) {
   if (!list_empty (&ready_list))
-    if (list_entry (list_begin (&ready_list), struct thread, elem)->priority >
+    if (list_entry (list_front (&ready_list), struct thread, elem)->priority >
         thread_current ()->priority)
       thread_yield ();
 }
@@ -330,8 +330,14 @@ compare_priority (const struct list_elem *input, const struct list_elem *prev,
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
 thread_set_priority (int new_priority) {
-  thread_current ()->priority = new_priority;
+  thread_current()->init_pri=new_priority;
+  
+  refresh_pri ();
+
+  dona_priority();
   test_max_priority ();
+  //   else
+  // 	dona_priority();
 }
 
 /* Returns the current thread's priority. */
@@ -432,6 +438,7 @@ init_thread (struct thread *t, const char *name, int priority) {
   t->init_pri = priority;
   t->waitLock = NULL;
   list_init (&t->dona);
+  list_init (&t->dona_elem);
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should
@@ -606,7 +613,8 @@ static tid_t
 allocate_tid (void) {
   static tid_t next_tid = 1;
   tid_t tid;
-
+  struct thread *cur = thread_current ();
+//   printf ("44. %d, %d\n", cur->priority, cur->priority);
   lock_acquire (&tid_lock);
   tid = next_tid++;
   lock_release (&tid_lock);
@@ -619,13 +627,13 @@ dona_priority (void) {
   struct thread *cur = thread_current ();
 
   for (int i = 0; i < 8; i++) {
-    if (cur->waitLock->holder == NULL)
+    if (!cur->waitLock)
       break;
-    if (cur->waitLock->holder->priority > cur->priority)
-      break;
-    cur->waitLock->holder->priority = cur->priority;
-    cur = cur->waitLock->holder;
+    struct thread *hold = cur->waitLock->holder;
+    hold->priority = cur->priority;
+    cur = hold;
   }
+
 }
 
 void
@@ -637,17 +645,41 @@ remove_lock (struct lock *lock) {
   // int dona_size = list_size(&cur->dona);
   // for (int i = 0; i<dona_size; i++){
   // 	if((temp=list_entry(&cur->dona_elem,struct thread, dona_elem))->waitLock
-  // == lock) 		list_remove(&temp->dona_elem); 	cur = cur->waitLock->holder;
+  // == lock) 		list_remove(&temp->dona_elem); 	cur =
+  // cur->waitLock->holder;
   // }
 
-  for (temp_e = list_begin (&cur->dona); list_end (&cur->dona) != temp_e; temp_e = list_next (temp_e)) {
-    if ((temp = list_entry (temp_e, struct thread, dona_elem))->waitLock == lock)
+  for (temp_e = list_begin (&cur->dona); list_end (&cur->dona) != temp_e;
+       temp_e = list_next (temp_e)) {
+    temp = list_entry (temp_e, struct thread, dona_elem);
+    if (temp->waitLock == lock)
       list_remove (&temp->dona_elem);
   }
 }
 
 void
 refresh_pri (void) {
+  struct thread *cur = thread_current ();
+  int temp;
+  cur->priority = cur->init_pri;
+  if (!list_empty (&cur->dona))
+    list_sort (&cur->dona, compare_priority, NULL);
 
+  if (!list_empty (&cur->dona)) {
+    temp = list_entry (list_front (&cur->dona), struct thread, dona_elem)->priority;
+    if (cur->priority < temp)
+      cur->priority = temp;
+  }
 
+//   struct thread *cur = thread_current ();
+
+//   cur->priority = cur->init_pri;
+  
+//   if (!list_empty (&cur->dona)) {
+//     // list_sort (&cur->dona, dona_priority, 0); NAGA
+
+//     struct thread *front = list_entry (list_front (&cur->dona), struct thread, dona_elem);
+//     if (front->priority > cur->priority)
+//       cur->priority = front->priority;
+//   }
 }
