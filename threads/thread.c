@@ -640,13 +640,14 @@ remove_lock (struct lock *lock) {
   // == lock) 		list_remove(&temp->dona_elem); 	cur = cur->waitLock->holder;
   // }
 
-  for (temp_e = list_begin (&cur->dona); list_end (&cur->dona);
-       temp_e = list_next (temp_e)) {
-    if ((temp = list_entry (temp_e, struct thread, dona_elem))->waitLock ==
-        lock)
+  for (temp_e = list_begin (&cur->dona); list_end (&cur->dona) != temp_e; temp_e = list_next (temp_e)) {
+    if ((temp = list_entry (temp_e, struct thread, dona_elem))->waitLock == lock)
       list_remove (&temp->dona_elem);
   }
 }
 
 void
-refresh_pri (void) {}
+refresh_pri (void) {
+
+
+}
