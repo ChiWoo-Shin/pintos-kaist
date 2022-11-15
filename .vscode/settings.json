@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "initializer_list": "c",
+        "limits": "c",
+        "type_traits": "c"
+    }
+}

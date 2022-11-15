@@ -112,7 +112,6 @@ timer_sleep (int64_t ticks) {
 void
 sema_sleep(struct semaphore *sema){
 	enum intr_level old_level; // interrupt를 막기위한 변수
-	
 	old_level = intr_disable (); // interrupt 막기 시작
 	while (sema->value == 0) { // value가 0이라면 이미 다른 누군가가 접근해있는 상태이니
 		list_push_back (&sema->waiters, &thread_current()->elem); // 대기 리스트에 넣고
