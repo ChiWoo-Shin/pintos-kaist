@@ -107,6 +107,17 @@ sema_try_down (struct semaphore *sema) {
    and wakes up one thread of those waiting for SEMA, if any.
 
    This function may be called from an interrupt handler. */
+/*
+sema up의 신호를 받고 thread를 block에서 꺼냅니다.
+우리는 waiters에 우선순위 순서로 너놓았기 때문에
+waiters의 제일 앞에서 pop해서 thread_unblock을 실행합니다.
+
+그리고 sema의 값을 1을 올려주고
+ready list 첫번째의 thread -> priority와
+current thread의 priority 비교와
+thread_yield를 해주는
+test_max_priority를 실행해줌
+*/
 void
 sema_up (struct semaphore *sema) {
   enum intr_level old_level;
@@ -188,6 +199,20 @@ lock_init (struct lock *lock) {
    interrupt handler.  This function may be called with
    interrupts disabled, but interrupts will be turned back on if
    we need to sleep. */
+/*
+lock을 요청한다
+lock을 요청한다는 것은 내가 일을 할 것이라는 말인데
+내가 일을 할 수 있는 공간이 있는지도 확인하게 된다
+
+내가 일을 할 수 있는 공간이 있다면 바로 일을 하면되고
+그게 아니면 sema_down을 통해서 thread block으로 빠져 대기를 하게 된다
+
+unblock 신호를 받고 나오게 되면 cur->waitLock = NULL로
+해당 thread와 이어진 lock->holder를 현재 Thread로 변경해줌
+--> Nested donation 본다면 좀 더 이해하기 쉬움
+
+최초의 접근을 통해 lock은 lock->holder에 자기 자신이 들어가게됨
+*/
 void
 lock_acquire (struct lock *lock) {
   ASSERT (lock != NULL);
@@ -232,15 +257,25 @@ lock_try_acquire (struct lock *lock) {
    An interrupt handler cannot acquire a lock, so it does not
    make sense to try to release a lock within an interrupt
    handler. */
+/*
+Thread L의 할일이 끝났다면 lock을 이제 release 합니다
+lock을 릴리즈할때 remove_lock을 통해서 donation list에서 release 되는 lock과
+동일한 lock을 찾아 지워줌 --> donation list에서 release된 lock의 정보를 지운다
+
+그 후 refresh_pri()를 통해서 현재 thread의 초기값 혹은 현재 thread가 받은 priority 중
+가장 큰 값을 적용해주고
+
+현재 thread의 lock->holder를 NULL로 놔준다
+이후 sema_up을 진행한다
+*/
 void
 lock_release (struct lock *lock) {
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
-  struct thread *cur = thread_current ();
-//   printf ("22. %d, %d\n", cur->priority, cur->priority);
+
   remove_lock (lock);
   refresh_pri ();
-//   printf ("222. %d, %d\n", cur->priority, cur->priority);
+
   lock->holder = NULL;
   sema_up (&lock->semaphore);
 }
@@ -339,6 +374,10 @@ cond_broadcast (struct condition *cond, struct lock *lock) {
     cond_signal (cond, lock);
 }
 
+/*
+sema_ele 에 대한 크기 priority를 비교하기 위함
+우선순위가 크면 True 작으면 false
+*/
 bool
 compare_sema_priority (const struct list_elem *a, const struct list_elem *b,
                        void *aux UNUSED) {

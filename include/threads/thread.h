@@ -145,11 +145,11 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+void do_iret (struct intr_frame *tf);
+
 void test_max_priority (void);
 bool compare_priority (const struct list_elem *input,
                        const struct list_elem *prev, void *aux UNUSED);
-
-void do_iret (struct intr_frame *tf);
 
 /* Implement for Priority Donation */
 void dona_priority (void);

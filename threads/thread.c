@@ -335,7 +335,7 @@ ready_list는 항상 우선순위가 높은 순서로 정렬됨
 void
 test_max_priority (void) { 
   if (!list_empty (&ready_list))
-    if (list_entry (list_front (&ready_list), struct thread, elem)->priority >
+    if (list_entry (list_begin (&ready_list), struct thread, elem)->priority >
         thread_current ()->priority)
       thread_yield ();
 }
@@ -357,6 +357,19 @@ compare_priority (const struct list_elem *input, const struct list_elem *prev,
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
+
+/*
+현재 Thread의 init_pri를 새로운 pri를 받음
+그후 refresh_pri를 실행시켜
+thread가 받은 donation의 우선순위와 비교하여
+높은 둘중 높은 우선순위를 사용함
+
+이후 dona_priority() 함수를 사용하여
+해당 Thread와 연결된 thread들에게 현재 thread의 priority를 전달해줌
+
+그리고 test_max_priority를 사용하여
+스케쥴링을 함
+*/
 void
 thread_set_priority (int new_priority) {
   thread_current()->init_pri=new_priority;
@@ -365,8 +378,6 @@ thread_set_priority (int new_priority) {
 
   dona_priority();
   test_max_priority ();
-  //   else
-  // 	dona_priority();
 }
 
 /* Returns the current thread's priority. */
@@ -643,7 +654,6 @@ allocate_tid (void) {
   static tid_t next_tid = 1;
   tid_t tid;
   struct thread *cur = thread_current ();
-//   printf ("44. %d, %d\n", cur->priority, cur->priority);
   lock_acquire (&tid_lock);
   tid = next_tid++;
   lock_release (&tid_lock);
@@ -651,6 +661,16 @@ allocate_tid (void) {
   return tid;
 }
 
+
+/*
+현재 thread가 waitlock이 존재한다면 -
+waitLock은 해당 thread가 대기하고 있는 Lock정보
+동작하지 않고
+
+waitLock이 NULL이라면
+현재 Thread와 연결되어있는 Thread들을 순회하면서
+priority를 한단계씩 올림
+*/
 void
 dona_priority (void) {
   struct thread *cur = thread_current ();
@@ -665,6 +685,14 @@ dona_priority (void) {
 
 }
 
+/*
+현재 Thread에서
+Donation안에 있는 list를 순회함
+이때 Donation list 안에 있는 temp thread가 가진 waitLock이
+
+remove 로 요청된 lock과 동일하면
+donation list에서 해당 dona_elem을 지움
+*/
 void
 remove_lock (struct lock *lock) {
   struct thread *cur = thread_current ();
@@ -679,6 +707,11 @@ remove_lock (struct lock *lock) {
   }
 }
 
+/*
+현재 Thread priority에 해당 Thread의 초기 priority를 넣어줌 (즉, 초기화를 시켜줌)
+현재 Thread의 우선순위와 현재 Thread가 받은 dona 의 우선순위를 비교하여
+더 큰 우선 순위를 적용한다
+*/
 void
 refresh_pri (void) {
   struct thread *cur = thread_current ();
@@ -688,7 +721,7 @@ refresh_pri (void) {
     list_sort (&cur->dona, compare_priority, NULL);
 
   if (!list_empty (&cur->dona)) {
-    temp = list_entry (list_front (&cur->dona), struct thread, dona_elem)->priority;
+    temp = list_entry (list_begin (&cur->dona), struct thread, dona_elem)->priority;
     if (cur->priority < temp)
       cur->priority = temp;
   }
