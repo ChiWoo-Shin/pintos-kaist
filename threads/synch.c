@@ -187,16 +187,17 @@ lock_acquire (struct lock *lock) {
   ASSERT (lock != NULL);
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
-
+	
   struct thread *cur = thread_current ();
   if (lock->holder) {
     cur->waitLock = lock;
-    list_insert_ordered (&lock->holder->dona, &cur->dona_elem, compare_priority, NULL);
+    list_insert_ordered (&lock->holder->dona, &cur->dona_elem, compare_priority,
+                         NULL);
     dona_priority ();
   }
 
   sema_down (&lock->semaphore);
-//   cur->waitLock = NULL;
+  cur->waitLock = NULL;
   lock->holder = cur;
 }
 
@@ -229,12 +230,12 @@ void
 lock_release (struct lock *lock) {
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
-
-  lock->holder = NULL;
-
+  struct thread *cur = thread_current ();
+//   printf ("22. %d, %d\n", cur->priority, cur->priority);
   remove_lock (lock);
-//   refresh_pri ();
-
+  refresh_pri ();
+//   printf ("222. %d, %d\n", cur->priority, cur->priority);
+  lock->holder = NULL;
   sema_up (&lock->semaphore);
 }
 
