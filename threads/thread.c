@@ -663,20 +663,17 @@ allocate_tid (void) {
 
 
 /*
-현재 thread가 waitlock이 존재한다면 -
-waitLock은 해당 thread가 대기하고 있는 Lock정보
-동작하지 않고
-
-waitLock이 NULL이라면
-현재 Thread와 연결되어있는 Thread들을 순회하면서
-priority를 한단계씩 올림
+현재 Thread의 waitLock 이 NULL이면 돌면 안됨
+연결된게 없으니깐
+NULL이 아니면
+순회하면서 priority를 추가
 */
 void
 dona_priority (void) {
   struct thread *cur = thread_current ();
 
   for (int i = 0; i < 8; i++) {
-    if (!cur->waitLock)
+    if (cur->waitLock ==NULL)
       break;
     struct thread *hold = cur->waitLock->holder;
     hold->priority = cur->priority;
