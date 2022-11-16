@@ -99,7 +99,7 @@ timer_elapsed (int64_t then) {
 /* Suspends execution for approximately TICKS timer ticks. */
 void
 timer_sleep (int64_t ticks) {
-	int64_t start = timer_ticks ();	
+	int64_t start = timer_ticks ();	//현재 ticks을 받아와 start에 저장
 	
 	ASSERT (intr_get_level () == INTR_ON);
 	
@@ -167,7 +167,7 @@ static void
 timer_interrupt (struct intr_frame *args UNUSED) {
 	ticks++;
 	thread_tick ();	
-	sema_awake(&sema, ticks);
+	sema_awake(&sema, ticks); // timer_interrupt는 tick이 절대적으로 흐르니깐 해당 tick을 이용하여 sema를 깨운다
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

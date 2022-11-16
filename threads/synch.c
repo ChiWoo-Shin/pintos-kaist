@@ -57,6 +57,13 @@ sema_init (struct semaphore *sema, unsigned value) {
    interrupts disabled, but if it sleeps then the next scheduled
    thread will probably turn interrupts back on. This is
    sema_down function. */
+
+/*
+Thread에 접근할때
+최초의 접근이라면 바로 lock을 갖고 작업을 진행 (이땐 sema 가 1)
+그 이후 또다른 접근이 존재한다면 sema 가 0이기 때문에 while문으로 들어간다
+while문에서 sema->waiters(block된 애들이 대기하는 곳)에 우선순위에 맞춰서 넣는다
+*/
 void
 sema_down (struct semaphore *sema) {
   enum intr_level old_level;
@@ -65,7 +72,6 @@ sema_down (struct semaphore *sema) {
   ASSERT (!intr_context ());
   old_level = intr_disable ();
   while (sema->value == 0) {
-    // list_push_back (&sema->waiters, &thread_current ()->elem);
     list_insert_ordered (&sema->waiters, &thread_current ()->elem,
                          compare_priority, NULL);
     thread_block ();
