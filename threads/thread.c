@@ -231,6 +231,11 @@ thread_block (void) {
    be important: if the caller had disabled interrupts itself,
    it may expect that it can atomically unblock a thread and
    update other data. */
+
+/*
+Thread가 block에서 깨어나 ready list로 들어갑니다.
+block에서 ready_list로 들어갈 때 우선 순위에 맞춰서 들어간다
+*/
 void
 thread_unblock (struct thread *t) {
   enum intr_level old_level;
@@ -239,7 +244,6 @@ thread_unblock (struct thread *t) {
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  // list_push_back (&ready_list, &t->elem);
   list_insert_ordered (&ready_list, &t->elem, compare_priority, NULL);
 
   t->status = THREAD_READY;
@@ -295,7 +299,12 @@ thread_exit (void) {
 
 /* Yields the CPU.  The current thread is not put to sleep and
    may be scheduled again immediately at the scheduler's whim. */
-void
+
+/*
+thread_yield는 현재 돌고 있는 thread를 ready_list로 보내고
+ready_list에 있는 첫번째를 꺼내서 launch를 합니다
+*/ 
+void 
 thread_yield (void) {
   struct thread *curr = thread_current ();
   enum intr_level old_level;
@@ -305,21 +314,41 @@ thread_yield (void) {
   old_level = intr_disable ();
   if (curr != idle_thread) {
     list_insert_ordered (&ready_list, &curr->elem, compare_priority, NULL);
-    // list_push_back (&ready_list, &curr->elem);
+    // ready list에 thread를 넣을때 우선 순위가 높은 순서로 맞춰서 넣는다
   }
 
   do_schedule (THREAD_READY);
   intr_set_level (old_level);
 }
 
+/*
+test_max_priority
+redy list가 비어있지 않을때 current_thred의 priority와
+ready의 첫번째 thread의 priority를 비교해서
+
+ready_list의 thread priority가 크다면
+--> thread_yield를 실행한다
+(현재 thread는 ready로 ready의 첫번째를 running으로 옮김)
+
+ready_list는 항상 우선순위가 높은 순서로 정렬됨
+*/
 void
-test_max_priority (void) {
+test_max_priority (void) { 
   if (!list_empty (&ready_list))
     if (list_entry (list_front (&ready_list), struct thread, elem)->priority >
         thread_current ()->priority)
       thread_yield ();
 }
 
+/*
+현재 list에 들어올 input 의 priority와 list에
+기존에 들어있던 element의 priority를 비교하였을 때
+input 이 크면 True를 반환하고
+input 이 작으면 False를 반환한다
+--> 우선순위 정렬을 위해서 사용함
+
+해당 True 를 들고 나가면 prev elem의 앞에 list_insert가 동작함
+*/
 bool
 compare_priority (const struct list_elem *input, const struct list_elem *prev,
                   void *aux UNUSED) {
@@ -642,13 +671,6 @@ remove_lock (struct lock *lock) {
   struct thread *temp;
   struct list_elem *temp_e;
 
-  // int dona_size = list_size(&cur->dona);
-  // for (int i = 0; i<dona_size; i++){
-  // 	if((temp=list_entry(&cur->dona_elem,struct thread, dona_elem))->waitLock
-  // == lock) 		list_remove(&temp->dona_elem); 	cur =
-  // cur->waitLock->holder;
-  // }
-
   for (temp_e = list_begin (&cur->dona); list_end (&cur->dona) != temp_e;
        temp_e = list_next (temp_e)) {
     temp = list_entry (temp_e, struct thread, dona_elem);
@@ -670,16 +692,4 @@ refresh_pri (void) {
     if (cur->priority < temp)
       cur->priority = temp;
   }
-
-//   struct thread *cur = thread_current ();
-
-//   cur->priority = cur->init_pri;
-  
-//   if (!list_empty (&cur->dona)) {
-//     // list_sort (&cur->dona, dona_priority, 0); NAGA
-
-//     struct thread *front = list_entry (list_front (&cur->dona), struct thread, dona_elem);
-//     if (front->priority > cur->priority)
-//       cur->priority = front->priority;
-//   }
 }
