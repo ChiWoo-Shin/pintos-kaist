@@ -62,6 +62,7 @@ static void init_thread (struct thread *, const char *name, int priority);
 static void do_schedule (int status);
 static void schedule (void);
 static tid_t allocate_tid (void);
+void test_max_priority (void);
 
 /* Returns true if T appears to point to a valid thread. */
 #define is_thread(t) ((t) != NULL && (t)->magic == THREAD_MAGIC)
@@ -205,7 +206,7 @@ thread_create (const char *name, int priority, thread_func *function,
   thread_unblock (t);
   /*current creating thread pri vs current running thread pri*/
   test_max_priority ();
-  
+
   return tid;
 }
 
@@ -303,12 +304,11 @@ thread_exit (void) {
 /*
 thread_yield는 현재 돌고 있는 thread를 ready_list로 보내고
 ready_list에 있는 첫번째를 꺼내서 launch를 합니다
-*/ 
-void 
+*/
+void
 thread_yield (void) {
   struct thread *curr = thread_current ();
   enum intr_level old_level;
-
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
@@ -318,6 +318,7 @@ thread_yield (void) {
   }
 
   do_schedule (THREAD_READY);
+
   intr_set_level (old_level);
 }
 
@@ -333,11 +334,12 @@ ready_list의 thread priority가 크다면
 ready_list는 항상 우선순위가 높은 순서로 정렬됨
 */
 void
-test_max_priority (void) { 
+test_max_priority (void) {
   if (!list_empty (&ready_list))
     if (list_entry (list_begin (&ready_list), struct thread, elem)->priority >
         thread_current ()->priority)
-      thread_yield ();
+        if(thread_current() !=idle_thread)
+          thread_yield ();
 }
 
 /*
@@ -372,11 +374,11 @@ thread가 받은 donation의 우선순위와 비교하여
 */
 void
 thread_set_priority (int new_priority) {
-  thread_current()->init_pri=new_priority;
-  
+  thread_current ()->init_pri = new_priority;
+
   refresh_pri ();
 
-  dona_priority();
+  dona_priority ();
   test_max_priority ();
 }
 
@@ -454,7 +456,6 @@ idle (void *idle_started_ UNUSED) {
 static void
 kernel_thread (thread_func *function, void *aux) {
   ASSERT (function != NULL);
-
   intr_enable (); /* The scheduler runs with interrupts off. */
   function (aux); /* Execute the thread function. */
   thread_exit (); /* If function() returns, kill the thread. */
@@ -478,7 +479,7 @@ init_thread (struct thread *t, const char *name, int priority) {
   t->init_pri = priority;
   t->waitLock = NULL;
   list_init (&t->dona);
-  list_init (&t->dona_elem);
+  // list_init (&t->dona_elem);
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should
@@ -661,7 +662,6 @@ allocate_tid (void) {
   return tid;
 }
 
-
 /*
 현재 Thread의 waitLock 이 NULL이면 돌면 안됨
 연결된게 없으니깐
@@ -673,13 +673,12 @@ dona_priority (void) {
   struct thread *cur = thread_current ();
 
   for (int i = 0; i < 8; i++) {
-    if (cur->waitLock ==NULL)
+    if (cur->waitLock == NULL)
       break;
     struct thread *hold = cur->waitLock->holder;
     hold->priority = cur->priority;
     cur = hold;
   }
-
 }
 
 /*
@@ -705,8 +704,8 @@ remove_lock (struct lock *lock) {
 }
 
 /*
-현재 Thread priority에 해당 Thread의 초기 priority를 넣어줌 (즉, 초기화를 시켜줌)
-현재 Thread의 우선순위와 현재 Thread가 받은 dona 의 우선순위를 비교하여
+현재 Thread priority에 해당 Thread의 초기 priority를 넣어줌 (즉, 초기화를
+시켜줌) 현재 Thread의 우선순위와 현재 Thread가 받은 dona 의 우선순위를 비교하여
 더 큰 우선 순위를 적용한다
 */
 void
@@ -718,7 +717,8 @@ refresh_pri (void) {
     list_sort (&cur->dona, compare_priority, NULL);
 
   if (!list_empty (&cur->dona)) {
-    temp = list_entry (list_begin (&cur->dona), struct thread, dona_elem)->priority;
+    temp = list_entry (list_begin (&cur->dona), struct thread, dona_elem)
+               ->priority;
     if (cur->priority < temp)
       cur->priority = temp;
   }

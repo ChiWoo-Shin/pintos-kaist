@@ -2,6 +2,7 @@
     "files.associations": {
         "initializer_list": "c",
         "limits": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "syscall.h": "c"
     }
 }

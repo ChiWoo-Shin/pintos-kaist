@@ -124,7 +124,7 @@ sema_sleep(struct semaphore *sema){
 void
 sema_awake(struct semaphore *sema, int64_t ticks){ // sema가 깨는 타이밍을 잡는 함수
 	struct thread *temp; // 임시 thread를 선언
-	enum intr_level old_level;
+	// enum intr_level old_level;
 	size_t waiter_size = list_size(&sema->waiters);
 	
 		for (int i=0 ; i<waiter_size ; i++)	{ // sema->watier 가 비어있지 않다면 즉, 대기하는 애들이 있다면
