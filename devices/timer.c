@@ -127,26 +127,21 @@ sema_sleep (struct semaphore *sema) {
   intr_set_level (old_level);   // interrupt를 이전 상태로 돌림
 }
 
-/* sema가 깨는 타이밍을 잡는 함수 */
-static void
-sema_awake (struct semaphore *sema, int64_t ticks) {
-  struct thread *temp;   // 임시 thread를 선언
-  enum intr_level old_level;
-  size_t waiter_size = list_size (&sema->waiters);
-
-  for (int i = 0; i < waiter_size; i++) {
-    // sema->watier 가 비어있지 않다면 즉, 대기하는 애들이 있다면
-    temp = list_entry (list_pop_front (&sema->waiters), struct thread, elem);
-    // 제일 앞에 있는 애를 pop하고 임시 thread로 확장
-    if (temp->tick_s <= ticks) {
-      // 임시 thread의 tick_s이 time_interrupt의
-      // ticks(OS ticks)보다 작다면 이제 깨어나야하니깐
-      thread_unblock (temp);   // 깨워주고
-      sema->value++;   // 프로세스에서 탈출하니깐 value++ 해줌
-    } else
-      list_push_back (&sema->waiters, &temp->elem);
-    // ticks의 시간이 안되었다면 다시 list 제일 뒤에 넣어줌
-  }
+void
+sema_awake(struct semaphore *sema, int64_t ticks){ // sema가 깨는 타이밍을 잡는 함수
+	struct thread *temp; // 임시 thread를 선언
+	// enum intr_level old_level;
+	size_t waiter_size = list_size(&sema->waiters);
+	
+		for (int i=0 ; i<waiter_size ; i++)	{ // sema->watier 가 비어있지 않다면 즉, 대기하는 애들이 있다면
+			temp = list_entry (list_pop_front (&sema->waiters), struct thread, elem); // 제일 앞에 있는 애를 pop하고 임시 thread로 확장
+			if (temp->tick_s <= ticks){ // 임시 thread의 tick_s이 time_interrupt의 ticks(OS ticks)보다 작다면 이제 깨어나야하니깐
+				thread_unblock(temp); // 깨워주고
+				sema->value++; // 프로세스에서 탈출하니깐 value++ 해줌
+			}
+			else
+				list_push_back(&sema->waiters, &temp->elem);	// ticks의 시간이 안되었다면 다시 list 제일 뒤에 넣어줌
+		}
 }
 
 /* Suspends execution for approximately MS milliseconds. */
