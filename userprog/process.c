@@ -42,7 +42,6 @@ tid_t
 process_create_initd (const char *file_name) {
   char *fn_copy;
   tid_t tid;
-
   /* Make a copy of FILE_NAME.
    * Otherwise there's a race between the caller and load(). */
   fn_copy = palloc_get_page (0);
@@ -52,8 +51,10 @@ process_create_initd (const char *file_name) {
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, initd, fn_copy);
+
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy);
+
   return tid;
 }
 
@@ -176,15 +177,17 @@ process_exec (void *f_name) {
   process_cleanup ();
 
   /* And then load the binary */
-  success = load (file_name, &_if);
-
+  success =
+      load (file_name, &_if);   // _if에 file name을 올릴때 palloc이 page를
+                                // 할당함 --> load 안에 pml4_create에서 만듦
+  hex_dump (_if.rsp, _if.rsp, USER_STACK - (_if.rsp), true);
   /* If load failed, quit. */
-  palloc_free_page (file_name);
+  palloc_free_page (file_name);   // 그에 따라서 아래에서 free를 해줌
   if (!success)
     return -1;
 
   /* Start switched process. */
-  do_iret (&_if);
+  do_iret (&_if);   // load가 완료되었다면 context switching을 진행
   NOT_REACHED ();
 }
 
@@ -202,9 +205,11 @@ process_wait (tid_t child_tid UNUSED) {
   /* XXX: Hint) The pintos exit if process_wait (initd), we recommend you
    * XXX:       to add infinite loop here before
    * XXX:       implementing the process_wait. */
-  // while(1){
-  //   continue;
-  // }
+  while (1) {
+    continue;
+  }
+  // thread_set_priority(thread_get_priority()-1);
+
   return -1;
 }
 
@@ -329,14 +334,38 @@ load (const char *file_name, struct intr_frame *if_) {
   bool success = false;
   int i;
 
+  /* for project 2 - start*/
+  uintptr_t stack_ptr;   // stack pointer가 가리키는 위치 표시
+  char *address[128];   // stack pointer가 처음 들어간 주소를 다시 넣으려함
+
+  char *argv[128];   // 인자를 나눠서 저장할 공간 - 0은 file name 그 이후부터는
+                     // 인자들 - 2중 포인터 사용 : 2차원 배열로 저장하기 위해서
+  int argc = 0;   // 인자 개수
+
+  char *token;           // file name을 token화
+  char *remain_string;   // 남은 string을 저장하기 위한 공간
+
+  token = strtok_r (file_name, " ",
+                    &remain_string);   // strtok_r 을 사용해서 토큰으로 구분하고
+                                       // 나눔 그때마다 argv 배열에 저장
+  argv[0] = token;
+
+  while (token != NULL) {
+    token = strtok_r (NULL, " ", &remain_string);
+    argc++;
+    // argv[argc]= "NULL";
+    argv[argc] = token;
+  }
+  /* for project 2 - end */
+
   /* Allocate and activate page directory. */
-  t->pml4 = pml4_create ();
+  t->pml4 = pml4_create ();   // 해당 작업 진행시 내부에서 palloc이 할당됨
   if (t->pml4 == NULL)
     goto done;
   process_activate (thread_current ());
 
   /* Open executable file. */
-  file = filesys_open (file_name);
+  file = filesys_open (argv[0]);
   if (file == NULL) {
     printf ("load: %s: open failed\n", file_name);
     goto done;
@@ -413,12 +442,55 @@ load (const char *file_name, struct intr_frame *if_) {
 
   /* TODO: Your code goes here.
    * TODO: Implement argument passing (see project2/argument_passing.html). */
+  /* token들을 stack_ptr (user VM)에 넣어줌 - 1단계 */
+  // stack_ptr = if_->rsp;
+  address[0] = stack_ptr;
+  for (int i = argc - 1; i > -1; i--) {
+    if_->rsp = if_->rsp - (strlen (argv[i]) + 1);
+    memcpy (if_->rsp, argv[i], strlen (argv[i]) + 1);
+    address[i] = if_->rsp;
+    printf ("ptr : %p, %s, %p \n", if_->rsp, argv[i], address[i]);
+  }
+  /* token들을 stack_ptr (user VM)에 넣어줌 - 2단계 */
+  if ((USER_STACK - (if_->rsp)) % 8 != 0) {
+    int i = 8 - (USER_STACK - (if_->rsp)) % 8;
+    if_->rsp = if_->rsp - i;
+    memset (if_->rsp, 0, i);
+    printf ("여기도 동작한다 \n");
+  }
+
+  /* 1단계 애들의 주소를 넣어준다 - 3 -1 단계 처음엔 0을 넣어줌 */
+  if_->rsp = if_->rsp - 8;
+  memset (if_->rsp, 0, 8);
+  printf ("도옹작\n");
+
+  /* 1단계 애들의 주소를 넣어준다 - 3 -2 단계 주소를 넣어줌 */
+  // for (int i = argc-1; i >-1; i--){
+  //   size_t temp = sizeof(address[i]);
+  //   if_->rsp = if_->rsp - temp;
+
+  //   printf("주소 : %d\n",temp);
+  //   memcpy(if_->rsp, address[i], temp);
+  //   printf("ptr : %p, %p \n",if_->rsp, &address[i]);
+  // }
+  if (address != NULL) {
+    size_t addr_size = argc * sizeof (addr_size) / sizeof (char);
+    printf ("주소 크기 %d\n", addr_size);
+    if_->rsp = if_->rsp - addr_size;
+
+    memcpy (if_->rsp, address, addr_size);
+    printf ("여기는 주소 \n%s\n", address);
+  }
+
+  if_->rsp = if_->rsp - 8;
+  memset (if_->rsp, 0, 8);
 
   success = true;
 
 done:
   /* We arrive here whether the load is successful or not. */
   file_close (file);
+
   return success;
 }
 
