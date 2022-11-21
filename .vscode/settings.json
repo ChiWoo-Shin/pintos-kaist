@@ -3,6 +3,15 @@
         "initializer_list": "c",
         "limits": "c",
         "type_traits": "c",
-        "syscall.h": "c"
+        "syscall.h": "c",
+        "*.inc": "c",
+        "*.tcc": "c",
+        "exception": "c",
+        "fstream": "c",
+        "iosfwd": "c",
+        "new": "c",
+        "ostream": "c",
+        "sstream": "c",
+        "streambuf": "c"
     }
 }

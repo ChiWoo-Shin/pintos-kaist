@@ -465,14 +465,7 @@ load (const char *file_name, struct intr_frame *if_) {
   printf ("도옹작\n");
 
   /* 1단계 애들의 주소를 넣어준다 - 3 -2 단계 주소를 넣어줌 */
-  // for (int i = argc-1; i >-1; i--){
-  //   size_t temp = sizeof(address[i]);
-  //   if_->rsp = if_->rsp - temp;
 
-  //   printf("주소 : %d\n",temp);
-  //   memcpy(if_->rsp, address[i], temp);
-  //   printf("ptr : %p, %p \n",if_->rsp, &address[i]);
-  // }
   if (address != NULL) {
     size_t addr_size = argc * sizeof (addr_size) / sizeof (char);
     printf ("주소 크기 %d\n", addr_size);
@@ -486,6 +479,9 @@ load (const char *file_name, struct intr_frame *if_) {
   memset (if_->rsp, 0, 8);
 
   success = true;
+
+  if_->R.rdi = argc;
+  if_->R.rsi = if_->rsp - 8;
 
 done:
   /* We arrive here whether the load is successful or not. */
