@@ -12,6 +12,7 @@
         "new": "c",
         "ostream": "c",
         "sstream": "c",
-        "streambuf": "c"
+        "streambuf": "c",
+        "syscall-nr.h": "c"
     }
 }

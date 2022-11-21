@@ -206,9 +206,9 @@ process_wait (tid_t child_tid UNUSED) {
    * XXX:       to add infinite loop here before
    * XXX:       implementing the process_wait. */
   while (1) {
-    continue;
+    // thread_set_priority(thread_get_priority()-1);
   }
-  // thread_set_priority(thread_get_priority()-1);
+  
 
   return -1;
 }
@@ -444,7 +444,7 @@ load (const char *file_name, struct intr_frame *if_) {
    * TODO: Implement argument passing (see project2/argument_passing.html). */
   /* token들을 stack_ptr (user VM)에 넣어줌 - 1단계 */
   // stack_ptr = if_->rsp;
-  address[0] = stack_ptr;
+  address[0] = if_->rsp;
   for (int i = argc - 1; i > -1; i--) {
     if_->rsp = if_->rsp - (strlen (argv[i]) + 1);
     memcpy (if_->rsp, argv[i], strlen (argv[i]) + 1);
@@ -481,7 +481,7 @@ load (const char *file_name, struct intr_frame *if_) {
   success = true;
 
   if_->R.rdi = argc;
-  if_->R.rsi = if_->rsp - 8;
+  if_->R.rsi = if_->rsp + 8;
 
 done:
   /* We arrive here whether the load is successful or not. */
