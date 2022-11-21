@@ -206,7 +206,6 @@ thread_create (const char *name, int priority, thread_func *function,
   thread_unblock (t);
   /*current creating thread pri vs current running thread pri*/
   test_max_priority ();
-
   return tid;
 }
 
@@ -335,11 +334,14 @@ ready_list는 항상 우선순위가 높은 순서로 정렬됨
 */
 void
 test_max_priority (void) {
-  if (!list_empty (&ready_list))
+  if (!list_empty (&ready_list)) {
     if (list_entry (list_begin (&ready_list), struct thread, elem)->priority >
-        thread_current ()->priority)
-        if(thread_current() !=idle_thread)
-          thread_yield ();
+        thread_current ()->priority) {
+      if (thread_current () != idle_thread) {
+        thread_yield ();
+      }
+    }
+  }
 }
 
 /*
