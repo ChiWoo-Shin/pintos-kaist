@@ -18,8 +18,8 @@ vmsg (const char *format, va_list args, const char *suffix)
      can end up being interleaved if we're unlucky. */
   static char buf[1024];
 
-  snprintf (buf, sizeof buf, "(%s) ", test_name);
-  vsnprintf (buf + strlen (buf), sizeof buf - strlen (buf), format, args);
+  snprintf (buf, sizeof buf, "(%s) ", test_name); // 배열 버퍼에 일련의 문자와 값의 형식을 지정하고 저장
+  vsnprintf (buf + strlen (buf), sizeof buf - strlen (buf), format, args); // 가변 인수를 나열하는게 아닌 가변 인수가 시작되는 지점만을 인수로 취함
   strlcpy (buf + strlen (buf), suffix, sizeof buf - strlen (buf));
   write (STDOUT_FILENO, buf, strlen (buf));
 }
