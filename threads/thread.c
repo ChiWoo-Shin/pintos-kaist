@@ -477,11 +477,17 @@ init_thread (struct thread *t, const char *name, int priority) {
   t->tf.rsp = (uint64_t) t + PGSIZE - sizeof (void *);
   t->priority = priority;
   t->magic = THREAD_MAGIC;
-
+  
+  /*for project -1 start*/
   t->init_pri = priority;
   t->waitLock = NULL;
   list_init (&t->dona);
   // list_init (&t->dona_elem);
+  /*for project -1 end*/
+
+  /*for project -2 start*/
+  t->exit_status =0;
+  /*for project -2 end*/
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should
