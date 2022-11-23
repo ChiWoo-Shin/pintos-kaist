@@ -398,6 +398,26 @@ intr_dump_frame (const struct intr_frame *f) {
 			f->es, f->ds, f->cs, f->ss);
 }
 
+void
+SCW_dump_frame (const struct intr_frame *f) {
+	/* CR2 is the linear address of the last page fault.
+	   See [IA32-v2a] "MOV--Move to/from Control Registers" and
+	   [IA32-v3a] 5.14 "Interrupt 14--Page Fault Exception
+	   (#PF)". */
+	printf ("=====================dump======================\n");
+	printf ("rax %016llx rbx %016llx rcx %016llx rdx %016llx\n",
+			f->R.rax, f->R.rbx, f->R.rcx, f->R.rdx);
+	printf ("rsp %016llx rbp %016llx rsi %016llx rdi %016llx\n",
+			f->rsp, f->R.rbp, f->R.rsi, f->R.rdi);
+	printf ("rip %016llx r8 %016llx  r9 %016llx r10 %016llx\n",
+			f->rip, f->R.r8, f->R.r9, f->R.r10);
+	printf ("r11 %016llx r12 %016llx r13 %016llx r14 %016llx\n",
+			f->R.r11, f->R.r12, f->R.r13, f->R.r14);
+	printf ("r15 %016llx rflags %08llx\n", f->R.r15, f->eflags);
+	printf ("es: %04x ds: %04x cs: %04x ss: %04x\n",
+			f->es, f->ds, f->cs, f->ss);
+}
+
 /* Returns the name of interrupt VEC. */
 const char *
 intr_name (uint8_t vec) {

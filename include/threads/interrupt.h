@@ -73,6 +73,7 @@ bool intr_context (void);
 void intr_yield_on_return (void);
 
 void intr_dump_frame (const struct intr_frame *);
+void SCW_dump_frame (const struct intr_frame *);
 const char *intr_name (uint8_t vec);
 
 #endif /* threads/interrupt.h */

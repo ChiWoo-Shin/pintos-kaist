@@ -49,6 +49,11 @@ process_create_initd (const char *file_name) {
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
 
+  /* for project 2 - start */
+  char *save;
+  strtok_r (file_name, " ", &save);
+  /* for project 2 - end */
+
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, initd, fn_copy);
 
@@ -180,7 +185,7 @@ process_exec (void *f_name) {
   success =
       load (file_name, &_if);   // _if에 file name을 올릴때 palloc이 page를
                                 // 할당함 --> load 안에 pml4_create에서 만듦
-  hex_dump (_if.rsp, _if.rsp, USER_STACK - (_if.rsp), true);
+  hex_dump (_if.rsp, _if.rsp, USER_STACK - _if.rsp, true);
   /* If load failed, quit. */
   palloc_free_page (file_name);   // 그에 따라서 아래에서 free를 해줌
   if (!success)
@@ -205,10 +210,10 @@ process_wait (tid_t child_tid UNUSED) {
   /* XXX: Hint) The pintos exit if process_wait (initd), we recommend you
    * XXX:       to add infinite loop here before
    * XXX:       implementing the process_wait. */
-  while (1) {
-    // thread_set_priority(thread_get_priority()-1);
-  }
-  
+  // while (1) {
+  // }
+  // thread_set_priority(thread_get_priority()-1);
+  for (int i = 0; i < 1000000000; i++);
 
   return -1;
 }
@@ -449,32 +454,28 @@ load (const char *file_name, struct intr_frame *if_) {
     if_->rsp = if_->rsp - (strlen (argv[i]) + 1);
     memcpy (if_->rsp, argv[i], strlen (argv[i]) + 1);
     address[i] = if_->rsp;
-    printf ("ptr : %p, %s, %p \n", if_->rsp, argv[i], address[i]);
   }
   /* token들을 stack_ptr (user VM)에 넣어줌 - 2단계 */
   if ((USER_STACK - (if_->rsp)) % 8 != 0) {
     int i = 8 - (USER_STACK - (if_->rsp)) % 8;
     if_->rsp = if_->rsp - i;
     memset (if_->rsp, 0, i);
-    printf ("여기도 동작한다 \n");
   }
 
   /* 1단계 애들의 주소를 넣어준다 - 3 -1 단계 처음엔 0을 넣어줌 */
   if_->rsp = if_->rsp - 8;
   memset (if_->rsp, 0, 8);
-  printf ("도옹작\n");
 
   /* 1단계 애들의 주소를 넣어준다 - 3 -2 단계 주소를 넣어줌 */
 
   if (address != NULL) {
-    size_t addr_size = argc * sizeof (addr_size) / sizeof (char);
-    printf ("주소 크기 %d\n", addr_size);
+    size_t addr_size = argc * sizeof (address[0]) / sizeof (char);
     if_->rsp = if_->rsp - addr_size;
 
     memcpy (if_->rsp, address, addr_size);
-    printf ("여기는 주소 \n%s\n", address);
   }
 
+  /* fake return을 넣어줌 - 4단계*/
   if_->rsp = if_->rsp - 8;
   memset (if_->rsp, 0, 8);
 

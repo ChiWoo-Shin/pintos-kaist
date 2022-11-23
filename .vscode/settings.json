@@ -13,6 +13,7 @@
         "ostream": "c",
         "sstream": "c",
         "streambuf": "c",
-        "syscall-nr.h": "c"
+        "syscall-nr.h": "c",
+        "typeinfo": "c"
     }
 }
