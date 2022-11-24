@@ -185,7 +185,7 @@ process_exec (void *f_name) {
   success =
       load (file_name, &_if);   // _if에 file name을 올릴때 palloc이 page를
                                 // 할당함 --> load 안에 pml4_create에서 만듦
-  hex_dump (_if.rsp, _if.rsp, USER_STACK - _if.rsp, true);
+  // hex_dump (_if.rsp, _if.rsp, USER_STACK - _if.rsp, true);
   /* If load failed, quit. */
   palloc_free_page (file_name);   // 그에 따라서 아래에서 free를 해줌
   if (!success)
@@ -213,7 +213,8 @@ process_wait (tid_t child_tid UNUSED) {
   // while (1) {
   // }
   // thread_set_priority(thread_get_priority()-1);
-  for (int i = 0; i < 1000000000; i++);
+  for (int i = 0; i < 2000000000; i++)
+    ;
 
   return -1;
 }
