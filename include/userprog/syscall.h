@@ -18,13 +18,14 @@ int open_handler (const char *file);
 int add_file_to_FDT (struct file *file);
 int file_size_handler (int fd);
 
-struct file *find_file_using_fd (int fd);
+static struct file *find_file_using_fd (int fd);
 
 int read_handler (int fd, const void *buffer, unsigned size);
 int write_handler (int fd, const void *buffer, unsigned size);
 void seek_handler (int fd, unsigned position);
 unsigned tell_handler (int fd);
 void close_handler (int fd);
+void remove_fd_in_FDT(int fd);
 
 struct lock filesys_lock;
 

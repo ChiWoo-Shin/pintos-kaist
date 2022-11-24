@@ -29,8 +29,8 @@ void syscall_handler (struct intr_frame *);
 #define MSR_STAR         0xc0000081 /* Segment selector msr */
 #define MSR_LSTAR        0xc0000082 /* Long mode SYSCALL target */
 #define MSR_SYSCALL_MASK 0xc0000084 /* Mask for the eflags */
-#define STDIN_FILENO 0
-#define STDOUT_FILENO 1
+#define STDIN_FILENO     0
+#define STDOUT_FILENO    1
 
 void
 syscall_init (void) {
@@ -61,7 +61,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
   uint64_t a5 = f->R.r8;
   uint64_t a6 = f->R.r9;
 
-  // SCW_dump_frame(f);
+  // SCW_dump_frame (f);
 
   switch (syscall_no) {
   case SYS_HALT:
@@ -72,7 +72,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
     break;
   // case SYS_FORK:
   //   f->R.rax = fork_handler (a1, f);
-    // break;
+  // break;
   case SYS_EXEC:
     f->R.rax = exec_handler (a1);
     break;
@@ -108,7 +108,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
     break;
 
   default:
-    thread_exit();
+    thread_exit ();
   }
   // printf ("system call!\n");
   // thread_exit ();
@@ -131,15 +131,14 @@ check_add (void *add) {
   }
 }
 
-struct file *
+static struct file *
 find_file_using_fd (int fd) {
-  if (fd < 0 || fd > FD_COUNT_LIMT)
-    return NULL;
-  struct thread *cur = thread_current();
-  
-  struct file *file_exit = cur->fd_table[fd];
+  struct thread *cur = thread_current ();
 
-  return file_exit;
+  if (fd < 0 || fd >= FD_COUNT_LIMT)
+    return NULL;
+
+  return cur->fd_table[fd];
 }
 
 void
@@ -186,13 +185,13 @@ bool
 create_handler (const char *file, unsigned initial_size) {
 
   check_add (file);
-  return filesys_create (file, initial_size); // lock 추가?
+  return filesys_create (file, initial_size);   // lock 추가?
 }
 
 bool
 remove_handler (const char *file) {
   check_add (file);
-  return (filesys_remove (file)); // lock 추가?
+  return (filesys_remove (file));   // lock 추가?
 }
 
 int
@@ -246,26 +245,26 @@ read_handler (int fd, const void *buffer, unsigned size) {
   check_add (buffer);
   int read_result;
   struct file *file_obj = find_file_using_fd (fd);
-  
+
   if (file_obj == NULL)
-      return -1;
+    return -1;
 
   if (fd == STDIN_FILENO) {
     // *(char *) buffer = input_getc ();
     // read_result = size;
     char word;
-    for (read_result = 0; read_result<size; read_result++){
-      word = input_getc();
-      if (word =="\0")
+    for (read_result = 0; read_result < size; read_result++) {
+      word = input_getc ();
+      if (word == "\0")
         break;
     }
   } else {
-      if (fd == STDOUT_FILENO)
-        return -1;
+    if (fd == STDOUT_FILENO)
+      return -1;
 
-      lock_acquire (&filesys_lock);
-      read_result = file_read (file_obj, buffer, size);
-      lock_release (&filesys_lock);
+    lock_acquire (&filesys_lock);
+    read_result = file_read (file_obj, buffer, size);
+    lock_release (&filesys_lock);
   }
   return read_result;
 }
@@ -276,7 +275,7 @@ write_handler (int fd, const void *buffer, unsigned size) {
   struct file *file_obj = find_file_using_fd (fd);
   if (fd == STDIN_FILENO)
     return 0;
-  
+
   if (fd == STDOUT_FILENO) {
     putbuf (buffer, size);
     return size;
@@ -288,7 +287,6 @@ write_handler (int fd, const void *buffer, unsigned size) {
     lock_release (&filesys_lock);
     return write_result;
   }
-  
 }
 
 void
@@ -300,8 +298,8 @@ seek_handler (int fd, unsigned position) {
 
   if (file_obj == NULL)
     return;
-  
-  file_seek(file_obj, position);
+
+  file_seek (file_obj, position);
 }
 
 unsigned
@@ -310,7 +308,7 @@ tell_handler (int fd) {
     return;
   struct file *file_obj = find_file_using_fd (fd);
   check_add (file_obj);
-  if(file_obj ==NULL)
+  if (file_obj == NULL)
     return;
 
   return file_tell (file_obj);
@@ -321,12 +319,15 @@ close_handler (int fd) {
   struct file *file_obj = find_file_using_fd (fd);
   if (file_obj == NULL)
     return;
+
   lock_acquire (&filesys_lock);
-  file_close (file_obj); // lock 추가하고?
+  file_close (file_obj);   // lock 추가하고?
   lock_release (&filesys_lock);
 
+  // remove_fd_in_FDT (fd);
   
-  if (fd < 0 || fd > FD_COUNT_LIMT)
+  if (fd < 0 || fd >= FD_COUNT_LIMT)
     return;
-  thread_current()->fd_table[fd] ==NULL;
+  thread_current ()->fd_table[fd] = NULL;
 }
+
