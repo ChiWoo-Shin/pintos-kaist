@@ -29,6 +29,8 @@ void syscall_handler (struct intr_frame *);
 #define MSR_STAR         0xc0000081 /* Segment selector msr */
 #define MSR_LSTAR        0xc0000082 /* Long mode SYSCALL target */
 #define MSR_SYSCALL_MASK 0xc0000084 /* Mask for the eflags */
+#define STDIN_FILENO 0
+#define STDOUT_FILENO 1
 
 void
 syscall_init (void) {
@@ -102,7 +104,8 @@ syscall_handler (struct intr_frame *f UNUSED) {
     f->R.rax = tell_handler (a1);
     break;
   case SYS_CLOSE:
-    close (a1);
+    close_handler (a1);
+    break;
 
   default:
     thread_exit();
@@ -297,7 +300,7 @@ seek_handler (int fd, unsigned position) {
 
   if (file_obj == NULL)
     return;
-
+  
   file_seek(file_obj, position);
 }
 
@@ -314,12 +317,15 @@ tell_handler (int fd) {
 }
 
 void
-close (int fd) {
+close_handler (int fd) {
   struct file *file_obj = find_file_using_fd (fd);
   if (file_obj == NULL)
     return;
-
+  lock_acquire (&filesys_lock);
   file_close (file_obj); // lock 추가하고?
+  lock_release (&filesys_lock);
+
+  
   if (fd < 0 || fd > FD_COUNT_LIMT)
     return;
   thread_current()->fd_table[fd] ==NULL;
