@@ -26,6 +26,8 @@ typedef int tid_t;
 #define PRI_MIN     0  /* Lowest priority. */
 #define PRI_DEFAULT 31 /* Default priority. */
 #define PRI_MAX     63 /* Highest priority. */
+#define FD_COUNT_LIMT 1<<9 /*page 하나의 크기가 1<<12인데 그중 3칸은 페이지 주소를 위해 할당됨 따라서 쓸수있는 크기는 1<<9 까지임*/
+#define FD_PAGES 3
 
 /* A kernel thread or user process.
  *
@@ -103,7 +105,9 @@ struct thread {
   struct list_elem elem; /* List element. */
 
   /* for project 2 -- start */
-  int exit_status;
+  int exit_status; // 현재 파일의 status를 확인하기 위해서
+  struct file **fd_table; // 프로세서는 파일 디스크립터를 관리하는 테이블이 필요함
+  int fd_idx; // 그리고 그 파일 디스크립터 테이블에 들어가는 파일 디스크립터의 인덱스를 저장
 
   /* for project 2 -- end */
 
