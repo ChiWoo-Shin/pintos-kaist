@@ -6,12 +6,13 @@
 #include "threads/loader.h"
 #include "userprog/gdt.h"
 #include "threads/flags.h"
+#include "threads/init.h"
 #include "intrinsic.h"
 #include "userprog/process.h"
-#include "lib/stdio.h"
-#include "lib/kernel/stdio.h"
+#include "kernel/stdio.h"
 #include "threads/palloc.h"
 #include "filesys/file.h"
+#include "filesys/filesys.h"
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
@@ -67,14 +68,15 @@ syscall_handler (struct intr_frame *f UNUSED) {
   case SYS_EXIT:
     exit_handler (a1);
     break;
-  case SYS_FORK:
-  	f->R.rax = fork_handler(a1, f);
+  // case SYS_FORK:
+  //   f->R.rax = fork_handler (a1, f);
+    // break;
   case SYS_EXEC:
     f->R.rax = exec_handler (a1);
     break;
-  case SYS_WAIT:
-  	f->R.rax = wait_handler(a1);
-    break;
+  // case SYS_WAIT:
+  //   f->R.rax = wait_handler (a1);
+  //   break;
   case SYS_CREATE:
     f->R.rax = create_handler (a1, a2);
     break;
@@ -100,10 +102,10 @@ syscall_handler (struct intr_frame *f UNUSED) {
     f->R.rax = tell_handler (a1);
     break;
   case SYS_CLOSE:
-    close(a1);
+    close (a1);
 
   default:
-    break;
+    thread_exit();
   }
   // printf ("system call!\n");
   // thread_exit ();
@@ -122,20 +124,19 @@ check_add (void *add) {
   struct thread *cur = thread_current ();
   if (!is_user_vaddr (add) || add == NULL ||
       pml4_get_page (cur->pml4, add) == NULL) {
-    // printf ("나는 여길 탄다\n");
     exit_handler (-1);
   }
-  // printf ("아니지 여길 타지 \n");
 }
 
 struct file *
 find_file_using_fd (int fd) {
   if (fd < 0 || fd > FD_COUNT_LIMT)
     return NULL;
+  struct thread *cur = thread_current();
+  
+  struct file *file_exit = cur->fd_table[fd];
 
-  struct file *file = thread_current ()->fd_table[fd];
-
-  return file;
+  return file_exit;
 }
 
 void
@@ -151,10 +152,10 @@ exit_handler (int status) {
   thread_exit ();
 }
 
-tid_t
-fork_handler (const char *thread_name, struct intr_frame *f){
-	return process_fork(thread_name, f);
-}
+// tid_t
+// fork_handler (const char *thread_name, struct intr_frame *f) {
+//   return process_fork (thread_name, f);
+// }
 
 int
 exec_handler (const char *file) {
@@ -173,22 +174,22 @@ exec_handler (const char *file) {
   return 0;
 }
 
-int
-wait_handler (pid_t pid) {
-	process_wait(pid);
-}
+// int
+// wait_handler (pid_t pid) {
+//   process_wait (pid);
+// }
 
 bool
 create_handler (const char *file, unsigned initial_size) {
 
   check_add (file);
-  return filesys_create (file, initial_size);
+  return filesys_create (file, initial_size); // lock 추가?
 }
 
 bool
 remove_handler (const char *file) {
   check_add (file);
-  return (filesys_remove (file));
+  return (filesys_remove (file)); // lock 추가?
 }
 
 int
@@ -242,27 +243,49 @@ read_handler (int fd, const void *buffer, unsigned size) {
   check_add (buffer);
   int read_result;
   struct file *file_obj = find_file_using_fd (fd);
-  if (fd == 0) {
-    *(char *) buffer = input_getc ();
-    read_result = size;
-  } else {
-    if (file_obj == NULL)
+  
+  if (file_obj == NULL)
       return -1;
-    else {
+
+  if (fd == STDIN_FILENO) {
+    // *(char *) buffer = input_getc ();
+    // read_result = size;
+    char word;
+    for (read_result = 0; read_result<size; read_result++){
+      word = input_getc();
+      if (word =="\0")
+        break;
+    }
+  } else {
+      if (fd == STDOUT_FILENO)
+        return -1;
+
       lock_acquire (&filesys_lock);
       read_result = file_read (file_obj, buffer, size);
       lock_release (&filesys_lock);
-    }
   }
   return read_result;
 }
 
 int
 write_handler (int fd, const void *buffer, unsigned size) {
+  check_add (buffer);
+  struct file *file_obj = find_file_using_fd (fd);
+  if (fd == STDIN_FILENO)
+    return 0;
+  
   if (fd == STDOUT_FILENO) {
     putbuf (buffer, size);
+    return size;
+  } else {
+    if (file_obj == NULL)
+      return 0;
+    lock_acquire (&filesys_lock);
+    off_t write_result = file_write (file_obj, buffer, size);
+    lock_release (&filesys_lock);
+    return write_result;
   }
-  return size;
+  
 }
 
 void
@@ -275,7 +298,7 @@ seek_handler (int fd, unsigned position) {
   if (file_obj == NULL)
     return;
 
-  file_obj->pos = position;
+  file_seek(file_obj, position);
 }
 
 unsigned
@@ -284,6 +307,8 @@ tell_handler (int fd) {
     return;
   struct file *file_obj = find_file_using_fd (fd);
   check_add (file_obj);
+  if(file_obj ==NULL)
+    return;
 
   return file_tell (file_obj);
 }
@@ -294,5 +319,8 @@ close (int fd) {
   if (file_obj == NULL)
     return;
 
-  file_close (file_obj);
+  file_close (file_obj); // lock 추가하고?
+  if (fd < 0 || fd > FD_COUNT_LIMT)
+    return;
+  thread_current()->fd_table[fd] ==NULL;
 }
