@@ -49,6 +49,7 @@
         "stdexcept": "c",
         "cinttypes": "c",
         "cstdbool": "c",
-        "random": "c"
+        "random": "c",
+        "synch.h": "c"
     }
 }

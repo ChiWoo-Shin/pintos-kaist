@@ -113,6 +113,7 @@ thread_init (void) {
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
+
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -210,6 +211,11 @@ thread_create (const char *name, int priority, thread_func *function,
   t->fd_table[0]=1; // stdin 자리
   t->fd_table[1]=2; // stdout 자리
   t->fd_idx = 2;
+
+  struct thread *cur = thread_current();
+  list_push_back(&cur->child_s, &t->child_elem);
+
+  cur->exit_status =0;
   /* for project 2 -- end*/
 
   /* Add to run queue. */
@@ -495,9 +501,15 @@ init_thread (struct thread *t, const char *name, int priority) {
   // list_init (&t->dona_elem);
   /*for project -1 end*/
 
-  /*for project -2 start*/
-  t->exit_status =0;
-  /*for project -2 end*/
+  /* for project -2 start */
+  list_init(&t->child_s);
+  sema_init(&t->fork_sema,0);
+  sema_init(&t->wait_sema,0);
+  sema_init(&t->exit_sema,0); 
+  
+  /* for project -2 end */
+
+
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should

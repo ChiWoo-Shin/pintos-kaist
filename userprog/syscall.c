@@ -13,6 +13,7 @@
 #include "threads/palloc.h"
 #include "filesys/file.h"
 #include "filesys/filesys.h"
+#include "user/syscall.h"
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
@@ -62,7 +63,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
   uint64_t a6 = f->R.r9;
 
   // SCW_dump_frame (f);
-
+  // printf("아 진짜 이러지 말자 미친 \n");
   switch (syscall_no) {
   case SYS_HALT:
     halt_handler ();
@@ -70,15 +71,15 @@ syscall_handler (struct intr_frame *f UNUSED) {
   case SYS_EXIT:
     exit_handler (a1);
     break;
-  // case SYS_FORK:
-  //   f->R.rax = fork_handler (a1, f);
-  // break;
+  case SYS_FORK:
+    f->R.rax = fork_handler (a1, f);
+   break;
   case SYS_EXEC:
     f->R.rax = exec_handler (a1);
     break;
-  // case SYS_WAIT:
-  //   f->R.rax = wait_handler (a1);
-  //   break;
+  case SYS_WAIT:
+    f->R.rax = wait_handler (a1);
+    break;
   case SYS_CREATE:
     f->R.rax = create_handler (a1, a2);
     break;
@@ -95,6 +96,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
     f->R.rax = read_handler (a1, a2, a3);
     break;
   case SYS_WRITE:
+    // printf("%s",a2);
     f->R.rax = write_handler (a1, a2, a3);
     break;
   case SYS_SEEK:
@@ -109,9 +111,8 @@ syscall_handler (struct intr_frame *f UNUSED) {
 
   default:
     thread_exit ();
+    break;
   }
-  // printf ("system call!\n");
-  // thread_exit ();
 }
 
 /* 포인터가 가리키는 주소가 user영역에 유요한 주소인지 확인*/
@@ -154,10 +155,10 @@ exit_handler (int status) {
   thread_exit ();
 }
 
-// tid_t
-// fork_handler (const char *thread_name, struct intr_frame *f) {
-//   return process_fork (thread_name, f);
-// }
+tid_t
+fork_handler (const char *thread_name, struct intr_frame *f) {
+  return process_fork (thread_name, f);
+}
 
 int
 exec_handler (const char *file) {
@@ -176,10 +177,10 @@ exec_handler (const char *file) {
   return 0;
 }
 
-// int
-// wait_handler (pid_t pid) {
-//   process_wait (pid);
-// }
+int
+wait_handler (tid_t pid) {
+  return process_wait (pid);
+}
 
 bool
 create_handler (const char *file, unsigned initial_size) {
@@ -258,10 +259,9 @@ read_handler (int fd, const void *buffer, unsigned size) {
       if (word == "\0")
         break;
     }
+  } else if (fd == STDOUT_FILENO) {
+    return -1;
   } else {
-    if (fd == STDOUT_FILENO)
-      return -1;
-
     lock_acquire (&filesys_lock);
     read_result = file_read (file_obj, buffer, size);
     lock_release (&filesys_lock);
@@ -324,10 +324,7 @@ close_handler (int fd) {
   file_close (file_obj);   // lock 추가하고?
   lock_release (&filesys_lock);
 
-  // remove_fd_in_FDT (fd);
-  
   if (fd < 0 || fd >= FD_COUNT_LIMT)
     return;
   thread_current ()->fd_table[fd] = NULL;
 }
-
