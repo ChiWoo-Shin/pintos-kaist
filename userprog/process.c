@@ -29,6 +29,11 @@ static bool load (const char *file_name, struct intr_frame *if_);
 static void initd (void *f_name);
 static void __do_fork (void *);
 
+struct argv {
+  struct thread *fork_thread;
+  struct intr_frame *fork_if;
+};
+
 /* General process initializer for initd and other process. */
 static void
 process_init (void) {
@@ -46,7 +51,6 @@ get_child (int pid) {
     struct thread *temp_thread = list_entry (temp, struct thread, child_elem);
     // printf("제발 %d %lx\n",pid, temp_thread->tid);
 
-    
     if (temp_thread->tid == pid) {
       return temp_thread;
     }
@@ -73,16 +77,15 @@ process_create_initd (const char *file_name) {
   /* for project 2 - start */
   char *save;
   strtok_r (file_name, " ", &save);
-  
 
   /* for project 2 - end */
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, initd, fn_copy);
-  
+
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy);
-  
+
   return tid;
 }
 
@@ -98,20 +101,25 @@ initd (void *f_name) {
   if (process_exec (f_name) < 0)
     PANIC ("Fail to launch initd\n");
 
-
   NOT_REACHED ();
 }
 
 /* Clones the current process as `name`. Returns the new process's thread id, or
  * TID_ERROR if the thread cannot be created. */
 tid_t
-process_fork (const char *name, struct intr_frame *if_ UNUSED) {
+process_fork (const char *name, struct intr_frame *if_) {
   /* Clone current thread to new thread.*/
   struct thread *parent = thread_current ();
-  memcpy (&parent->parent_if, if_, sizeof (struct intr_frame));
+  // printf ("11111111111111111111111111111\n");
 
-  tid_t tid = thread_create (name, PRI_DEFAULT, __do_fork, thread_current ());
+  struct argv *fork_argv = (struct argv *) malloc (sizeof (struct argv));
+  fork_argv->fork_if = if_;
+  fork_argv->fork_thread = thread_current ();
 
+  // memcpy (&parent->parent_if, if_, sizeof (struct intr_frame));
+
+  tid_t tid = thread_create (name, PRI_DEFAULT, __do_fork, fork_argv);
+  // printf ("222222222222222222222222222222\n");
   if (tid == TID_ERROR)
     return TID_ERROR;
 
@@ -119,10 +127,7 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
   // printf("여기?\n");
 
   sema_down (&child->fork_sema);
-  if (child->exit_status == -1){
-    // printf("여기???????????????");
-    return TID_ERROR;}
-
+  // printf ("33333333333333333333333333333\n");
   return tid;
   // return -1;
 }
@@ -133,14 +138,16 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 static bool
 duplicate_pte (uint64_t *pte, void *va, void *aux) {
   struct thread *current = thread_current ();
-  struct thread *parent = (struct thread *) aux;
+  struct argv *argv_fork = (struct argv *) aux;
+  // struct thread *parent = (struct thread *) aux;
+  struct thread *parent = argv_fork->fork_thread;
   void *parent_page;
   void *newpage;
   bool writable;
 
   /* 1. TODO: If the parent_page is kernel page, then return immediately. */
   if (is_kernel_vaddr (va))
-    return false;
+    return true;
   /* 2. Resolve VA from the parent's page map level 4. */
   parent_page = pml4_get_page (parent->pml4, va);
   if (parent_page == NULL)
@@ -178,14 +185,19 @@ duplicate_pte (uint64_t *pte, void *va, void *aux) {
 static void
 __do_fork (void *aux) {
   struct intr_frame if_;
-  struct thread *parent = (struct thread *) aux;
+  // struct thread *parent = (struct thread *) aux;
+
+  struct argv *fork_argv = (struct argv *) aux;
+  struct thread *parent = fork_argv->fork_thread;
   struct thread *current = thread_current ();
   /* TODO: somehow pass the parent_if. (i.e. process_fork()'s if_) */
   struct intr_frame *parent_if;
+  parent_if = fork_argv->fork_if;
   bool succ = true;
 
   /* 1. Read the cpu context to local stack. */
   memcpy (&if_, parent_if, sizeof (struct intr_frame));
+  if_.R.rax = 0;
 
   /* 2. Duplicate PT */
   current->pml4 = pml4_create ();
@@ -198,7 +210,7 @@ __do_fork (void *aux) {
   if (!supplemental_page_table_copy (&current->spt, &parent->spt))
     goto error;
 #else
-  if (!pml4_for_each (parent->pml4, duplicate_pte, parent))
+  if (!pml4_for_each (parent->pml4, duplicate_pte, fork_argv))
     goto error;
 #endif
 
@@ -215,10 +227,8 @@ __do_fork (void *aux) {
 
   for (int i = 2; i < FD_COUNT_LIMT; i++) {
     struct file *temp_file = parent->fd_table[i];
-
     if (temp_file == NULL)
       continue;
-
     current->fd_table[i] = file_duplicate (temp_file);
   }
 
@@ -226,14 +236,15 @@ __do_fork (void *aux) {
   sema_up (&current->fork_sema);
 
   // if_.R.rax = 0;
-  // process_init ();
+  process_init ();
 
   /* Finally, switch to the newly created process. */
   if (succ)
+  free(fork_argv);
     do_iret (&if_);
 error:
-  current->exit_status = TID_ERROR;
-  sema_up (&current->fork_sema);
+  // current->exit_status = TID_ERROR;
+  // sema_up (&current->fork_sema);
   exit_handler (TID_ERROR);
   // thread_exit ();
 }
@@ -261,8 +272,6 @@ process_exec (void *f_name) {
       load (file_name, &_if);   // _if에 file name을 올릴때 palloc이 page를
                                 // 할당함 --> load 안에 pml4_create에서 만듦
   // hex_dump (_if.rsp, _if.rsp, USER_STACK - _if.rsp, true);
-  
-
 
   /* If load failed, quit. */
   palloc_free_page (file_name);   // 그에 따라서 아래에서 free를 해줌
@@ -309,13 +318,13 @@ process_exit (void) {
    * TODO: project2/process_termination.html).
    * TODO: We recommend you to implement process resource cleanup here. */
 
-  for (int i=2; i < FD_COUNT_LIMT; i++)
-    close_handler(i);
-  
-  sema_up(&curr->wait_sema);
-  sema_up(&curr->fork_sema);
-  sema_down(&curr->exit_sema);
-  palloc_free_page(curr->fd_table);
+  for (int i = 2; i < FD_COUNT_LIMT; i++)
+    close_handler (i);
+
+  sema_up (&curr->wait_sema);
+  sema_up (&curr->fork_sema);
+  sema_down (&curr->exit_sema);
+  palloc_free_page (curr->fd_table);
 
   process_cleanup ();
 }
@@ -435,7 +444,7 @@ load (const char *file_name, struct intr_frame *if_) {
   char *address[64];   // stack pointer가 처음 들어간 주소를 다시 넣으려함
 
   char *argv[64];   // 인자를 나눠서 저장할 공간 - 0은 file name 그 이후부터는
-                     // 인자들 - 2중 포인터 사용 : 2차원 배열로 저장하기 위해서
+                    // 인자들 - 2중 포인터 사용 : 2차원 배열로 저장하기 위해서
   int argc = 0;   // 인자 개수
 
   char *token;           // file name을 token화

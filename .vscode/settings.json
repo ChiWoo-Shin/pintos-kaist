@@ -50,6 +50,7 @@
         "cinttypes": "c",
         "cstdbool": "c",
         "random": "c",
-        "synch.h": "c"
+        "synch.h": "c",
+        "thread.h": "c"
     }
 }
