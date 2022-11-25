@@ -5,6 +5,7 @@
 #include <list.h>
 #include <stdint.h>
 #include "threads/interrupt.h"
+#include "threads/synch.h"
 #ifdef VM
 #include "vm/vm.h"
 #endif
@@ -109,11 +110,20 @@ struct thread {
   struct file **fd_table; // 프로세서는 파일 디스크립터를 관리하는 테이블이 필요함
   int fd_idx; // 그리고 그 파일 디스크립터 테이블에 들어가는 파일 디스크립터의 인덱스를 저장
 
+  struct list child_s;
+  struct list_elem child_elem;
+  
+  struct intr_frame parent_if;
+  struct semaphore fork_sema;
+  struct semaphore wait_sema;
+  struct semaphore exit_sema;
+
   /* for project 2 -- end */
 
 #ifdef USERPROG
   /* Owned by userprog/process.c. */
   uint64_t *pml4; /* Page map level 4 */
+
 #endif
 #ifdef VM
   /* Table for whole virtual memory owned by thread. */
