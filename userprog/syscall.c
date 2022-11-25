@@ -293,11 +293,11 @@ void
 seek_handler (int fd, unsigned position) {
   struct file *file_obj = find_file_using_fd (fd);
 
-  if (fd <= 2)
-    return;
+  // if (fd <= 2)
+  //   return;
 
-  if (file_obj == NULL)
-    return;
+  // if (file_obj == NULL)
+  //   return;
 
   file_seek (file_obj, position);
 }
