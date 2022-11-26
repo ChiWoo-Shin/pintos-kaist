@@ -51,6 +51,7 @@
         "cstdbool": "c",
         "random": "c",
         "synch.h": "c",
-        "thread.h": "c"
+        "thread.h": "c",
+        "palloc.h": "c"
     }
 }
