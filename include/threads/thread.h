@@ -118,6 +118,7 @@ struct thread {
   struct semaphore wait_sema;
   struct semaphore exit_sema;
 
+  struct file *running;
   /* for project 2 -- end */
 
 #ifdef USERPROG
