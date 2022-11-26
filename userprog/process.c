@@ -49,7 +49,7 @@ get_child (int pid) {
   for (struct list_elem *temp = list_begin (child_list);
        temp != list_end (child_list); temp = list_next (temp)) {
     struct thread *temp_thread = list_entry (temp, struct thread, child_elem);
-    // printf("제발 %d %lx\n",pid, temp_thread->tid);
+
 
     if (temp_thread->tid == pid) {
       return temp_thread;
@@ -320,10 +320,11 @@ process_exit (void) {
 
   for (int i = 2; i < FD_COUNT_LIMT; i++)
     close_handler (i);
-
   sema_up (&curr->wait_sema);
   sema_up (&curr->fork_sema);
+  file_close(curr->running);
   sema_down (&curr->exit_sema);
+
   palloc_free_page (curr->fd_table);
 
   process_cleanup ();
@@ -471,11 +472,14 @@ load (const char *file_name, struct intr_frame *if_) {
 
   /* Open executable file. */
   file = filesys_open (argv[0]);
+
   if (file == NULL) {
     printf ("load: %s: open failed\n", file_name);
     goto done;
   }
 
+  t->running = file;
+  file_deny_write(file);
   /* Read and verify executable header. */
   if (file_read (file, &ehdr, sizeof ehdr) != sizeof ehdr ||
       memcmp (ehdr.e_ident, "\177ELF\2\1\1", 7) || ehdr.e_type != 2 ||
@@ -586,7 +590,7 @@ load (const char *file_name, struct intr_frame *if_) {
 
 done:
   /* We arrive here whether the load is successful or not. */
-  file_close (file);
+  // file_close (file);
 
   return success;
 }
