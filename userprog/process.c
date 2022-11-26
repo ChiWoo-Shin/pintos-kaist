@@ -321,11 +321,12 @@ process_exit (void) {
   for (int i = 2; i < FD_COUNT_LIMT; i++)
     close_handler (i);
 
+  palloc_free_page (curr->fd_table);
+  file_close(curr->running);
+
   sema_up (&curr->wait_sema);
   sema_up (&curr->fork_sema);
   sema_down (&curr->exit_sema);
-  // palloc_free_page (curr->fd_table);
-  palloc_free_multiple(curr->fd_table, FD_PAGES);
 
   process_cleanup ();
 }
@@ -477,6 +478,8 @@ load (const char *file_name, struct intr_frame *if_) {
     goto done;
   }
 
+
+
   /* Read and verify executable header. */
   if (file_read (file, &ehdr, sizeof ehdr) != sizeof ehdr ||
       memcmp (ehdr.e_ident, "\177ELF\2\1\1", 7) || ehdr.e_type != 2 ||
@@ -487,6 +490,8 @@ load (const char *file_name, struct intr_frame *if_) {
     goto done;
   }
 
+  t->running = file;
+  file_deny_write(file);
   /* Read program headers. */
   file_ofs = ehdr.e_phoff;
   for (i = 0; i < ehdr.e_phnum; i++) {
@@ -587,7 +592,7 @@ load (const char *file_name, struct intr_frame *if_) {
 
 done:
   /* We arrive here whether the load is successful or not. */
-  file_close (file);
+  // file_close (file);
 
   return success;
 }
