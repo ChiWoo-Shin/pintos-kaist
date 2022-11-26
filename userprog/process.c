@@ -110,26 +110,20 @@ tid_t
 process_fork (const char *name, struct intr_frame *if_) {
   /* Clone current thread to new thread.*/
   struct thread *parent = thread_current ();
-  // printf ("11111111111111111111111111111\n");
 
   struct argv *fork_argv = (struct argv *) malloc (sizeof (struct argv));
   fork_argv->fork_if = if_;
   fork_argv->fork_thread = thread_current ();
 
-  // memcpy (&parent->parent_if, if_, sizeof (struct intr_frame));
 
   tid_t tid = thread_create (name, PRI_DEFAULT, __do_fork, fork_argv);
-  // printf ("222222222222222222222222222222\n");
   if (tid == TID_ERROR)
     return TID_ERROR;
 
   struct thread *child = get_child (tid);
-  // printf("여기?\n");
 
   sema_down (&child->fork_sema);
-  // printf ("33333333333333333333333333333\n");
   return tid;
-  // return -1;
 }
 
 #ifndef VM
@@ -239,8 +233,8 @@ __do_fork (void *aux) {
   process_init ();
 
   /* Finally, switch to the newly created process. */
-  if (succ)
   free(fork_argv);
+  if (succ)
     do_iret (&if_);
 error:
   // current->exit_status = TID_ERROR;
@@ -321,14 +315,14 @@ process_exit (void) {
   for (int i = 2; i < FD_COUNT_LIMT; i++)
     close_handler (i);
 
-  palloc_free_page (curr->fd_table);
+  palloc_free_multiple (curr->fd_table, FD_PAGES);
   file_close(curr->running);
+  process_cleanup ();
 
   sema_up (&curr->wait_sema);
   sema_up (&curr->fork_sema);
   sema_down (&curr->exit_sema);
 
-  process_cleanup ();
 }
 
 /* Free the current process's resources. */

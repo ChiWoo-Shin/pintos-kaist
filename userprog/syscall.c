@@ -73,7 +73,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
     break;
   case SYS_FORK:
     f->R.rax = fork_handler (a1, f);
-   break;
+    break;
   case SYS_EXEC:
     f->R.rax = exec_handler (a1);
     break;
@@ -110,7 +110,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
     break;
 
   default:
-    thread_exit ();
+    exit_handler (-1);
     break;
   }
 }
@@ -212,24 +212,23 @@ open_handler (const char *file) {
   return fd_idx;
 }
 
-int add_file_to_FDT(struct file *file)
-{
-    struct thread *cur = thread_current();
-    struct file **fdt = cur->fd_table;
+int
+add_file_to_FDT (struct file *file) {
+  struct thread *cur = thread_current ();
+  struct file **fdt = cur->fd_table;
+  int fd_index = cur->fd_idx;
 
-    // Find open spot from the front
-    //  fd 위치가 제한 범위 넘지않고, fd table의 인덱스 위치와 일치한다면
-    while (cur->fd_idx < FD_COUNT_LIMT && fdt[cur->fd_idx])
-    {
-        cur->fd_idx++;
-    }
+  while (fdt[fd_index] != NULL && fd_index < FD_COUNT_LIMT) {
+    fd_index++;
+  }
 
-    // error - fd table full
-    if (cur->fd_idx >= FD_COUNT_LIMT)
-        return -1;
+  if (fd_index >= FD_COUNT_LIMT) {
+    return -1;
+  }
 
-    fdt[cur->fd_idx] = file;
-    return cur->fd_idx;
+  cur->fd_idx = fd_index;
+  fdt[fd_index] = file;
+  return fd_index;
 }
 
 int
@@ -294,12 +293,6 @@ void
 seek_handler (int fd, unsigned position) {
   struct file *file_obj = find_file_using_fd (fd);
 
-  // if (fd <= 2)
-  //   return;
-
-  // if (file_obj == NULL)
-  //   return;
-
   file_seek (file_obj, position);
 }
 
@@ -321,11 +314,12 @@ close_handler (int fd) {
   if (file_obj == NULL)
     return;
 
-  lock_acquire (&filesys_lock);
-  file_close (file_obj);   // lock 추가하고?
-  lock_release (&filesys_lock);
-
   if (fd < 0 || fd >= FD_COUNT_LIMT)
     return;
   thread_current ()->fd_table[fd] = NULL;
+  palloc_free_page(thread_current ()->fd_table[fd]);
+
+  lock_acquire (&filesys_lock);
+  file_close (file_obj);   // lock 추가하고?
+  lock_release (&filesys_lock);
 }
