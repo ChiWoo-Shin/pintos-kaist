@@ -29,7 +29,7 @@ unsigned tell_handler (int fd);
 void close_handler (int fd);
 void remove_fd_in_FDT(int fd);
 
-struct lock filesys_lock;
+struct lock filesys_lock; // write 사용시에 나만 작성하기 위해서 lock을 사용
 
 
 #endif /* userprog/syscall.h */

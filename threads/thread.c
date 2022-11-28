@@ -176,8 +176,7 @@ thread_print_stats (void) {
    PRIORITY, but no actual priority scheduling is implemented.
    Priority scheduling is the goal of Problem 1-3. */
 tid_t
-thread_create (const char *name, int priority, thread_func *function,
-               void *aux) {
+thread_create (const char *name, int priority, thread_func *function, void *aux) {
   struct thread *t;
   tid_t tid;
 
@@ -189,8 +188,8 @@ thread_create (const char *name, int priority, thread_func *function,
     return TID_ERROR;
 
   /* Initialize thread. */
-  init_thread (t, name, priority);
-  tid = t->tid = allocate_tid ();
+  init_thread (t, name, priority); // thread를 초기화함 
+  tid = t->tid = allocate_tid (); // thread의 ID를 할당받음
 
   /* Call the kernel_thread if it scheduled.
    * Note) rdi is 1st argument, and rsi is 2nd argument. */
@@ -204,24 +203,28 @@ thread_create (const char *name, int priority, thread_func *function,
   t->tf.eflags = FLAG_IF;
 
   /* for project 2 -- start*/
+
+  // 2중 포인터 부분은 init 함수를 사용하지 못하기 때문에 fd_table 아래와 같이 새로 할당 받음
   t->fd_table = palloc_get_multiple(PAL_ZERO, FD_PAGES);
   if (t->fd_table == NULL)
     return TID_ERROR;
   
+  // 0, 1 두개의 공간은 정해진 역할을 해야함 따라서 index (fd의 개수) 는 2부터 시작함
   t->fd_table[0]=1; // stdin 자리
   t->fd_table[1]=2; // stdout 자리
   t->fd_idx = 2;
 
   struct thread *cur = thread_current();
-  list_push_back(&cur->child_s, &t->child_elem);
+  list_push_back(&cur->child_s, &t->child_elem); // create 할 때 자기 자신을 자식 process list에 넣어줌
 
-  cur->exit_status =0;
+  cur->exit_status =0; // 종료 status를 초기 0으로 초기화
   /* for project 2 -- end*/
 
   /* Add to run queue. */
   thread_unblock (t);
   /*current creating thread pri vs current running thread pri*/
   test_max_priority ();
+  
   return tid;
 }
 
@@ -351,9 +354,8 @@ ready_list는 항상 우선순위가 높은 순서로 정렬됨
 void
 test_max_priority (void) {
   if (!list_empty (&ready_list)) {
-    if (list_entry (list_begin (&ready_list), struct thread, elem)->priority >
-        thread_current ()->priority) {
-      if (thread_current () != idle_thread) {
+    if (list_entry (list_begin (&ready_list), struct thread, elem)->priority > thread_current ()->priority) {
+      if (thread_current () != idle_thread) { // idle_thread를 확인하는 부분이 없으면 project 1에서는 정상동작 하지만 project 2에서는 바로 kernel panic을 띄우니 꼭 추가하도록하자
         thread_yield ();
       }
     }
@@ -502,7 +504,8 @@ init_thread (struct thread *t, const char *name, int priority) {
   /*for project -1 end*/
 
   /* for project -2 start */
-  list_init(&t->child_s);
+  // project 2 에서 선언된 애들을 init 해줌
+  list_init(&t->child_s); 
   sema_init(&t->fork_sema,0);
   sema_init(&t->wait_sema,0);
   sema_init(&t->exit_sema,0); 
@@ -526,6 +529,10 @@ next_thread_to_run (void) {
 }
 
 /* Use iretq to launch the thread */
+/*
+* 
+* User stack에 기록한 정보를 register로 올리는 부분임
+*/
 void
 do_iret (struct intr_frame *tf) {
   __asm __volatile("movq %0, %%rsp\n"
