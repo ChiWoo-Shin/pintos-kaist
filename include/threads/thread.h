@@ -110,15 +110,15 @@ struct thread {
   struct file **fd_table; // 프로세서는 파일 디스크립터를 관리하는 테이블이 필요함
   int fd_idx; // 그리고 그 파일 디스크립터 테이블에 들어가는 파일 디스크립터의 인덱스를 저장
 
-  struct list child_s;
-  struct list_elem child_elem;
+  struct list child_s; // 부모가 자식 process의 정보를 기억할 공간
+  struct list_elem child_elem; // child list elem
   
-  struct intr_frame parent_if;
-  struct semaphore fork_sema;
-  struct semaphore wait_sema;
-  struct semaphore exit_sema;
+  struct intr_frame parent_if; // 부모의 intr_frame 정보를 기억할 공간
+  struct semaphore fork_sema; // 자식이 fork가 완료 될때까지 기다리는 sema
+  struct semaphore wait_sema; // process 가 동작중일땐 wait에서 대기를 해야만함 --> exit가 들어오기 전까지는 계속 대기
+  struct semaphore exit_sema; // exit handler를 위한 sema --> 종료가 되기전에 wait와 fork 쪽이 먼저 정리가 되어야하니깐
 
-  struct file *running;
+  struct file *running; // rox를 위해 사용할 공간
   /* for project 2 -- end */
 
 #ifdef USERPROG
