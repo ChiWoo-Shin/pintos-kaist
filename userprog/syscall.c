@@ -17,6 +17,8 @@
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
+// struct page *check_add (void *);
+void check_buff (void * , unsigned , void *, bool );
 
 /* System call.
  *
@@ -52,6 +54,8 @@ syscall_init (void) {
 void
 syscall_handler (struct intr_frame *f UNUSED) {
   // TODO: Your implementation goes here.
+  thread_current()->rsp_stack = f->rsp;
+
 
   int syscall_no = f->R.rax;   // syscall numbef를 가지고 있음
 
@@ -93,9 +97,11 @@ syscall_handler (struct intr_frame *f UNUSED) {
       f->R.rax = file_size_handler (a1);
       break;
     case SYS_READ:
+      check_buff(f->R.rsi, f->R.rdx, f->rsp, 1);
       f->R.rax = read_handler (a1, a2, a3);
       break;
     case SYS_WRITE:
+      check_buff(f->R.rsi, f->R.rdx, f->rsp, 0);
       f->R.rax = write_handler (a1, a2, a3);
       break;
     case SYS_SEEK:
@@ -106,6 +112,12 @@ syscall_handler (struct intr_frame *f UNUSED) {
       break;
     case SYS_CLOSE:
       close_handler (a1);
+      break;
+    case SYS_MMAP:
+      f->R.rax = mmap(a1, a2, a3, a4, a5);
+      break;
+    case SYS_MUNMAP:
+      munmap(a1);
       break;
 
     default:
@@ -122,14 +134,34 @@ pml4_get_page : 들어온 주소가 유자 가상주소 안에 할당된 페이�
 확인
 -->유저 영역 내이면서도 그 안에 할당된 페이지 안에 있어야 한다
 */
+// void
+// check_add (void *add) {
+//   struct thread *cur = thread_current ();
+//   if (!is_user_vaddr (add) || add == NULL ||
+//       pml4_get_page (cur->pml4, add) == NULL) {
+//     exit_handler (-1);
+//   }
+// }
+
+struct page *check_add (void *add) {
+  if (is_kernel_vaddr (add) || add == NULL || spt_find_page(&thread_current()->spt,add) == NULL || !(&thread_current()->pml4)) 
+  {
+    exit_handler(-1);
+  }
+  return spt_find_page(&thread_current()->spt, add);
+}
+
 void
-check_add (void *add) {
-  struct thread *cur = thread_current ();
-  if (!is_user_vaddr (add) || add == NULL ||
-      pml4_get_page (cur->pml4, add) == NULL) {
-    exit_handler (-1);
+check_buff (void * buffer, unsigned size, void *rsp, bool to_write){
+  for(int i=0; i<size; i++){
+    struct page *page = check_add(buffer + i);
+    if(page ==NULL)
+      exit_handler(-1);
+    if(to_write == true && page->writable == false)
+      exit_handler(-1);
   }
 }
+
 
 static struct file *
 find_file_using_fd (int fd) {   // fd를 가지고 file을 찾기 위한 함수 file은
@@ -189,7 +221,13 @@ wait_handler (tid_t pid) {   // 자식 process를 wait 함 (exit status가 올�
 bool   // create 성공하면 true 실패하면 false, ++ open 이랑은 다른것, 혼란스러워하면 안됨
 create_handler (const char *file, unsigned initial_size) {
   check_add (file);
-  return filesys_create (file, initial_size);
+  if (file)
+  {
+    return filesys_create (file, initial_size);
+  }
+  else{
+    exit_handler(-1);
+    }
 }
 
 bool   // remove 성공하면 true 실패하면 false, ++ file이 remove되는 것과 close는 별개임 (즉, 제거되더라도 open되어있을 수도 있다는 말)
@@ -201,6 +239,10 @@ remove_handler (const char *file) {
 int   // open 하는데 성공하면 0 이상의 정수를 반환함 실패하면 음수를 반환
 open_handler (const char *file) {
   check_add (file);
+
+  if(file ==NULL){
+    return -1;
+  }
   struct file *file_st = filesys_open (file);   // 일단 파일을 open하고
   if (file_st == NULL) {   // open 한게 Null이 아니면 if문을 통과
     return -1;
@@ -219,19 +261,16 @@ open_handler (const char *file) {
 }
 
 int
-add_file_to_FDT (
-    struct file *file) {   // 각 process에서 open한 부분을 기억하는 부분
+add_file_to_FDT (struct file *file) {   // 각 process에서 open한 부분을 기억하는 부분
   struct thread *cur = thread_current ();
   struct file **fdt = cur->fd_table;
   int fd_index = cur->fd_idx;
 
-  while (fdt[fd_index] != NULL &&
-         fd_index < FD_COUNT_LIMT) {   // 현재 fd_table의 빈공간을 찾는 작업
+  while (fdt[fd_index] != NULL && fd_index < FD_COUNT_LIMT) {   // 현재 fd_table의 빈공간을 찾는 작업
     fd_index++;
   }
 
-  if (fd_index >= FD_COUNT_LIMT) {   // fd_index가 FD_count_limit 보다 크다는건
-                                     // 공간이 없다는 의미
+  if (fd_index >= FD_COUNT_LIMT) {   // fd_index가 FD_count_limit 보다 크다는건 공간이 없다는 의미
     return -1;
   }
 
@@ -241,16 +280,13 @@ add_file_to_FDT (
 }
 
 int
-file_size_handler (
-    int fd) {   // input된 fd를 이용하여 file의 size를 찾아주는 handler
-  struct file *file_ =
-      find_file_using_fd (fd);   // 들어온 fd에 맞는 file을 찾아주고
+file_size_handler (int fd) {   // input된 fd를 이용하여 file의 size를 찾아주는 handler
+  struct file *file_ = find_file_using_fd (fd);   // 들어온 fd에 맞는 file을 찾아주고
 
   if (file_ == NULL)   // 만일 적합한 file을 찾지 못했다면 -1 을 return 함
     return -1;
 
-  return file_length (file_);   // 미리 구현되어있는 file_length 함수를 사용하여
-                                // file_의 크기를 찾아서 return 해줌
+  return file_length (file_);   // 미리 구현되어있는 file_length 함수를 사용하여 file_의 크기를 찾아서 return 해줌
 }
 
 int
@@ -292,9 +328,9 @@ write_handler (int fd, const void *buffer, unsigned size) {
   } else {
     if (file_obj == NULL)   // file_obj가 NULL이면 return 0;
       return 0;
-    lock_acquire (&filesys_lock);   // file write를 하기 전에 lock을 걸고
+    // lock_acquire (&filesys_lock);   // file write를 하기 전에 lock을 걸고
     off_t write_result = file_write (file_obj, buffer, size);   // file에 buffer를 size만큼 쓰고
-    lock_release (&filesys_lock);              // lock 을 풀어줌
+    // lock_release (&filesys_lock);              // lock 을 풀어줌
     return write_result;   // 결과로 write 크기 (buffer에 적힌 크기) 를 return 함
   }
 }
@@ -330,7 +366,36 @@ close_handler (int fd) {   // fd를 이용하여 열려 있는 file을 닫음
     return;
   thread_current ()->fd_table[fd] = NULL;   // 열린 파일이 있던 위치를 NULL로 바꾸고
 
-  lock_acquire (&filesys_lock);
+  // lock_acquire (&filesys_lock);
   file_close (file_obj);
-  lock_release (&filesys_lock);
+  // lock_release (&filesys_lock);
+}
+
+void
+*mmap (void *addr, size_t length, int writable, int fd, off_t offset){
+  if(offset % PGSIZE != 0 )
+    return NULL;
+
+  if (pg_round_down(addr) != addr || is_kernel_vaddr(addr) || addr == NULL || (long long)length <=0)
+    return NULL;
+  
+  if (fd == 0 || fd == 1)
+    exit_handler(-1);
+  
+  if(spt_find_page(&thread_current()->spt, addr))
+    return NULL;
+  
+  struct file * target = find_file_using_fd(fd);
+
+  if(target == NULL)
+    return NULL;
+  
+  void *ret = do_mmap(addr, length, writable, target, offset);
+
+  return ret;
+}
+
+void 
+munmap (void *addr){
+  do_munmap(addr);
 }

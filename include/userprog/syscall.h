@@ -8,7 +8,8 @@
 #define USERPROG_SYSCALL_H
 
 void syscall_init (void);
-void check_add (void *add);
+// void check_add (void *add);
+struct page *check_add (void *add);
 void halt_handler (void);
 void exit_handler (int status);
 tid_t fork_handler (const char *thread_name, struct intr_frame *f);
@@ -31,5 +32,7 @@ void remove_fd_in_FDT(int fd);
 
 struct lock filesys_lock; // write 사용시에 나만 작성하기 위해서 lock을 사용
 
+void *mmap (void *addr, size_t length, int writable, int fd, off_t offset);
+void munmap (void *addr);
 
 #endif /* userprog/syscall.h */

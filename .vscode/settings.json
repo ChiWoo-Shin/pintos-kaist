@@ -52,6 +52,7 @@
         "random": "c",
         "synch.h": "c",
         "thread.h": "c",
-        "palloc.h": "c"
+        "palloc.h": "c",
+        "process.h": "c"
     }
 }

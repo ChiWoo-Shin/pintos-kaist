@@ -344,7 +344,8 @@ process_cleanup (void) { // 현재 process의 resource도 resource를 해제해�
   struct thread *curr = thread_current ();
 
 #ifdef VM
-  supplemental_page_table_kill (&curr->spt);
+  if(!hash_empty(&curr->spt.pages))
+    supplemental_page_table_kill (&curr->spt);
 #endif
 
   uint64_t *pml4;
@@ -429,7 +430,7 @@ struct ELF64_PHDR {
 #define ELF  ELF64_hdr
 #define Phdr ELF64_PHDR
 
-static bool setup_stack (struct intr_frame *if_);
+// static bool setup_stack (struct intr_frame *if_);
 static bool validate_segment (const struct Phdr *, struct file *);
 static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           uint32_t read_bytes, uint32_t zero_bytes,
@@ -763,12 +764,36 @@ install_page (void *upage, void *kpage, bool writable) {
 /* From here, codes will be used after project 3.
  * If you want to implement the function for only project 2, implement it on the
  * upper block. */
+bool
+install_page (void *upage, void *kpage, bool writable) {
+  struct thread *t = thread_current ();
 
-static bool
+  /* Verify that there's not already a page at that virtual
+   * address, then map our page there. */
+  return (pml4_get_page (t->pml4, upage) == NULL &&
+          pml4_set_page (t->pml4, upage, kpage, writable));
+}
+
+bool
 lazy_load_segment (struct page *page, void *aux) {
   /* TODO: Load the segment from the file */
   /* TODO: This called when the first page fault occurs on address VA. */
   /* TODO: VA is available when calling this function. */
+  struct file *file = ((struct container *)aux) ->file;
+  off_t aux_offset = ((struct container *)aux)->offset;
+  size_t aux_read_byte = ((struct container *)aux)->read_byte;
+
+  size_t page_zero_byte = PGSIZE - aux_read_byte;
+
+  file_seek(file, aux_offset);
+
+  if(file_read(file, page->frame->kva, aux_read_byte) != (int)aux_read_byte){
+    palloc_free_page(page->frame->kva);
+    return false;
+  }
+  memset(page->frame->kva + aux_read_byte, 0, page_zero_byte);
+
+  return true;
 }
 
 /* Loads a segment starting at offset OFS in FILE at address
@@ -799,22 +824,31 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage, uint32_t read_bytes,
     size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
     size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
+    /* project for 3 - start */
+    struct container *container = (struct container *)malloc(sizeof(struct container));
+    container->file = file;
+    container->offset = ofs;
+    container->read_byte = page_read_bytes;
+    
+    /* project for 3 - end */
+
     /* TODO: Set up aux to pass information to the lazy_load_segment. */
-    void *aux = NULL;
+    // void *aux = NULL;
     if (!vm_alloc_page_with_initializer (VM_ANON, upage, writable,
-                                         lazy_load_segment, aux))
+                                         lazy_load_segment, container))
       return false;
 
     /* Advance. */
     read_bytes -= page_read_bytes;
     zero_bytes -= page_zero_bytes;
     upage += PGSIZE;
+    ofs += page_read_bytes;
   }
   return true;
 }
 
 /* Create a PAGE of stack at the USER_STACK. Return true on success. */
-static bool
+bool
 setup_stack (struct intr_frame *if_) {
   bool success = false;
   void *stack_bottom = (void *) (((uint8_t *) USER_STACK) - PGSIZE);
@@ -823,6 +857,15 @@ setup_stack (struct intr_frame *if_) {
    * TODO: If success, set the rsp accordingly.
    * TODO: You should mark the page is stack. */
   /* TODO: Your code goes here */
+
+  if(vm_alloc_page(VM_ANON|VM_MARKER_0, stack_bottom, 1)){
+    success = vm_claim_page(stack_bottom);
+
+    if(success){
+      if_->rsp = USER_STACK;
+      thread_current()->stack_bottom = stack_bottom;
+    }
+  }
 
   return success;
 }
