@@ -53,6 +53,7 @@
         "synch.h": "c",
         "thread.h": "c",
         "palloc.h": "c",
-        "process.h": "c"
+        "process.h": "c",
+        "vm.h": "c"
     }
 }

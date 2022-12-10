@@ -223,7 +223,7 @@ lock_acquire (struct lock *lock) {
   struct thread *cur = thread_current ();
   if (lock->holder) {
     cur->waitLock = lock;
-    list_insert_ordered (&lock->holder->dona, &cur->dona_elem, compare_priority,
+    list_insert_ordered (&lock->holder->dona, &cur->dona_elem, compare_dona_priority,
                          NULL);
     dona_priority ();
   }

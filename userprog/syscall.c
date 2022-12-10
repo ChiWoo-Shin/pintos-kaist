@@ -14,6 +14,7 @@
 #include "filesys/file.h"
 #include "filesys/filesys.h"
 #include "user/syscall.h"
+#include "vm/vm.h"
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
@@ -238,23 +239,26 @@ remove_handler (const char *file) {
 
 int   // open 하는데 성공하면 0 이상의 정수를 반환함 실패하면 음수를 반환
 open_handler (const char *file) {
+  
   check_add (file);
-
+  // printf_hash(&thread_current()->spt);
   if(file ==NULL){
+    // printf("내가 문제다 //////// \n");
     return -1;
   }
+  // lock_acquire(&filesys_lock);
   struct file *file_st = filesys_open (file);   // 일단 파일을 open하고
+  // lock_release(&filesys_lock);
   if (file_st == NULL) {   // open 한게 Null이 아니면 if문을 통과
     return -1;
   }
 
-  int fd_idx = add_file_to_FDT (file_st);   // open한 file 을 table로 관리함
   // 현재 thread가 가진 구조체 내부 fd table에 빈공간이 있으면
   // 추가 후 해당 위치를 return 하고 추가하지 못했으면 -1을 return함
+  int fd_idx = add_file_to_FDT (file_st);   // open한 file 을 table로 관리함
   if (fd_idx == -1) {   // 추가하지 못했다면
     file_close (file_st);   // 열린걸 다시 닫아줘야함 (열린 상태로 두면 안됨)
   }
-
   return fd_idx;   // 파일이 잘 열렸다면 열린 파일의 fd table에서의 index를
                    // 반환함 (아마도 열린 파일의 개수랑 동일할 것으로 보임)
 }
@@ -327,9 +331,9 @@ write_handler (int fd, const void *buffer, unsigned size) {
   } else {
     if (file_obj == NULL)   // file_obj가 NULL이면 return 0;
       return 0;
-    // lock_acquire (&filesys_lock);   // file write를 하기 전에 lock을 걸고
+    lock_acquire (&filesys_lock);   // file write를 하기 전에 lock을 걸고
     off_t write_result = file_write (file_obj, buffer, size);   // file에 buffer를 size만큼 쓰고
-    // lock_release (&filesys_lock);              // lock 을 풀어줌
+    lock_release (&filesys_lock);              // lock 을 풀어줌
     return write_result;   // 결과로 write 크기 (buffer에 적힌 크기) 를 return 함
   }
 }
@@ -365,9 +369,9 @@ close_handler (int fd) {   // fd를 이용하여 열려 있는 file을 닫음
     return;
   thread_current ()->fd_table[fd] = NULL;   // 열린 파일이 있던 위치를 NULL로 바꾸고
 
-  // lock_acquire (&filesys_lock);
+  lock_acquire (&filesys_lock);
   file_close (file_obj);
-  // lock_release (&filesys_lock);
+  lock_release (&filesys_lock);
 }
 
 void

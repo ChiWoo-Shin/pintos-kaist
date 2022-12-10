@@ -109,6 +109,7 @@ unsigned page_hash (const struct hash_elem *, void *);
 bool page_cmp_less(const struct hash_elem *, const struct hash_elem *, void *);
 bool insert_page(struct hash *, struct page *);
 bool delete_page(struct hash *, struct page *);
+void printf_hash(struct supplemental_page_table *spt);
 
 #define vm_alloc_page(type, upage, writable) \
 	vm_alloc_page_with_initializer ((type), (upage), (writable), NULL, NULL)

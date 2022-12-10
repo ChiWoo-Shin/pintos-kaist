@@ -123,6 +123,7 @@ process_fork (const char *name, struct intr_frame *if_) {
   struct thread *child = get_child (tid); // child list에서 tid가 일치하는 child를 찾아주고 (thread가 create 되면서 추가가 됐을거니깐)
 
   sema_down (&child->fork_sema); // 해당 child의 fork를 sema_down 함 --> fork가 완료되기전에 process가 종료되지 않게 방지함
+  
   return tid;
 }
 
@@ -235,11 +236,12 @@ __do_fork (void *aux) {
       continue;
     current->fd_table[i] = file_duplicate (temp_file); // temp file의 속성을 포함한 개체를 복사하고 File과 동일한 inode에 대한 새 파일을 반환 --> 실패하면 NULL을 반환
   }
-
+  
   current->fd_idx = parent->fd_idx; // 위 정보를 상속 받기 때문에 열린 파일의 개수도 같이 넘겨줌
-  sema_up (&current->fork_sema); // 그리고 sema_up으로 fork_sema는 풀어줌
 
-  process_init (); // process를 초기화
+  // sema_up (&current->fork_sema); // 그리고 sema_up으로 fork_sema는 풀어줌
+
+  // process_init (); // process를 초기화
 
   /* Finally, switch to the newly created process. */
   free (fork_argv); // fork_argv의 역할은 끝났으니깐 free 해줌
@@ -255,6 +257,7 @@ __do_fork (void *aux) {
 
 error:
   current->exit_status = TID_ERROR;
+  sema_up(&current->fork_sema);
   free (fork_argv);
   exit_handler (TID_ERROR);
 }
@@ -277,7 +280,7 @@ process_exec (void *f_name) {
   /* We first kill the current context */
   process_cleanup ();
 
-  /* And then load the binary */
+   /* And then load the binary */
   success = load (file_name, &_if);   // _if에 file name을 올릴때 palloc이 page를
                                 // 할당함 --> load 안에 pml4_create에서 만듦
   // hex_dump (_if.rsp, _if.rsp, USER_STACK - _if.rsp, true);
@@ -342,7 +345,7 @@ process_exit (void) {
 static void
 process_cleanup (void) { // 현재 process의 resource도 resource를 해제해줌
   struct thread *curr = thread_current ();
-
+  
 #ifdef VM
   if(!hash_empty(&curr->spt.pages))
     supplemental_page_table_kill (&curr->spt);
@@ -610,7 +613,6 @@ load (const char *file_name, struct intr_frame *if_) {
   /* 인자의 개수는 R.rdi에 저장해주고 시작 주소는 R.rsi에 넣어줌 */
   if_->R.rdi = argc;
   if_->R.rsi = if_->rsp + 8; //fake return을 제외한 시작점
-
 done:
   /* We arrive here whether the load is successful or not. */
 
@@ -817,6 +819,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage, uint32_t read_bytes,
   ASSERT (pg_ofs (upage) == 0);
   ASSERT (ofs % PGSIZE == 0);
 
+  file_seek(file, ofs);
   while (read_bytes > 0 || zero_bytes > 0) {
     /* Do calculate how to fill this page.
      * We will read PAGE_READ_BYTES bytes from FILE
@@ -858,7 +861,7 @@ setup_stack (struct intr_frame *if_) {
    * TODO: You should mark the page is stack. */
   /* TODO: Your code goes here */
 
-  if(vm_alloc_page(VM_ANON|VM_MARKER_0, stack_bottom, 1)){
+if(vm_alloc_page(VM_ANON|VM_MARKER_0, stack_bottom, 1)){
     success = vm_claim_page(stack_bottom);
 
     if(success){

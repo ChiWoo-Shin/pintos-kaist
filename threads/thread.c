@@ -353,7 +353,7 @@ ready_list는 항상 우선순위가 높은 순서로 정렬됨
 */
 void
 test_max_priority (void) {
-  if (!list_empty (&ready_list)) {
+  if (!list_empty (&ready_list) && !intr_context()) {
     if (list_entry (list_begin (&ready_list), struct thread, elem)->priority > thread_current ()->priority) {
       if (thread_current () != idle_thread) { // idle_thread를 확인하는 부분이 없으면 project 1에서는 정상동작 하지만 project 2에서는 바로 kernel panic을 띄우니 꼭 추가하도록하자
         thread_yield ();
@@ -378,6 +378,13 @@ compare_priority (const struct list_elem *input, const struct list_elem *prev,
          list_entry (prev, struct thread, elem)->priority;
 }
 
+bool
+compare_dona_priority(const struct list_elem *input, const struct list_elem *prev,
+                  void *aux UNUSED){
+    
+    return list_entry (input, struct thread, dona_elem)->priority >
+         list_entry (prev, struct thread, dona_elem)->priority;
+}
 /* Sets the current thread's priority to NEW_PRIORITY. */
 
 /*
@@ -398,7 +405,7 @@ thread_set_priority (int new_priority) {
 
   refresh_pri ();
 
-  dona_priority ();
+  // dona_priority ();
   test_max_priority ();
 }
 
@@ -751,7 +758,7 @@ refresh_pri (void) {
   int temp;
   cur->priority = cur->init_pri;
   if (!list_empty (&cur->dona))
-    list_sort (&cur->dona, compare_priority, NULL);
+    list_sort (&cur->dona, compare_dona_priority, NULL);
 
   if (!list_empty (&cur->dona)) {
     temp = list_entry (list_begin (&cur->dona), struct thread, dona_elem)
