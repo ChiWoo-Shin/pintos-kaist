@@ -251,7 +251,6 @@ open_handler (const char *file) {
   int fd_idx = add_file_to_FDT (file_st);   // open한 file 을 table로 관리함
   // 현재 thread가 가진 구조체 내부 fd table에 빈공간이 있으면
   // 추가 후 해당 위치를 return 하고 추가하지 못했으면 -1을 return함
-
   if (fd_idx == -1) {   // 추가하지 못했다면
     file_close (file_st);   // 열린걸 다시 닫아줘야함 (열린 상태로 두면 안됨)
   }

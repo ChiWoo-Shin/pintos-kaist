@@ -53,7 +53,6 @@ static struct frame *vm_evict_frame (void);
 bool
 vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 		vm_initializer *init, void *aux) {
-
 	ASSERT (VM_TYPE(type) != VM_UNINIT)
 
 	struct supplemental_page_table *spt = &thread_current ()->spt;
@@ -98,12 +97,12 @@ struct page *
 spt_find_page (struct supplemental_page_table *spt UNUSED, void *va UNUSED) {
 	// struct page *page = NULL;
 	/* TODO: Fill this function. */
+
 	struct page *page = (struct page *)malloc(sizeof(struct page));
 	struct hash_elem *e;
 
 	page->va = pg_round_down(va);
 	e = hash_find(&spt->pages, &page->elem_hash);
-
 	free(page);
 	
 	return e != NULL ? hash_entry(e, struct page, elem_hash) : NULL;
@@ -202,7 +201,6 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	struct page *page = NULL;
 	/* TODO: Validate the fault */
 	/* TODO: Your code goes here */
-
 	if(is_kernel_vaddr(addr))
 		return false;
 
@@ -359,10 +357,13 @@ page_cmp_less(const struct hash_elem *a_, const struct hash_elem *b_, void *aux 
 
 bool
 insert_page(struct hash *pages, struct page *p){
-	if(hash_insert(pages, &p->elem_hash)==NULL)
+	if(hash_insert(pages, &p->elem_hash)==NULL){
 		return true;
-	else
+
+	}
+	else{
 		return false;
+	}
 }
 
 bool
