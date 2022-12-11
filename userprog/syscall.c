@@ -246,9 +246,9 @@ open_handler (const char *file) {
     // printf("내가 문제다 //////// \n");
     return -1;
   }
-  // lock_acquire(&filesys_lock);
+  lock_acquire(&filesys_lock);
   struct file *file_st = filesys_open (file);   // 일단 파일을 open하고
-  // lock_release(&filesys_lock);
+  lock_release(&filesys_lock);
   if (file_st == NULL) {   // open 한게 Null이 아니면 if문을 통과
     return -1;
   }

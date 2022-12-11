@@ -344,17 +344,19 @@ supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
   /* TODO: Destroy all the supplemental_page_table hold by thread and
    * TODO: writeback all the modified contents to the storage. */
 
-  hash_clear (&spt->pages, spt_des);
 
-  // struct hash_iterator i;
-  // hash_first(&i, &spt->pages);
-  // while(hash_next(&i)){
-  // 	struct page *page = hash_entry( hash_cur(&i), struct page, elem_hash);
+  struct hash_iterator i;
+  hash_first(&i, &spt->pages);
+  while(hash_next(&i)){
+  	struct page *page = hash_entry( hash_cur(&i), struct page, elem_hash);
 
-  // 	if (page->operations->type == VM_FILE)
-  // 		do_munmap(page->va);
-  // }
+  	if (page->operations->type == VM_FILE)
+  		do_munmap(page->va);
+  
+  // free(page);
+  }
   // hash_destroy(&spt->pages, spt_des);
+  hash_clear (&spt->pages, spt_des);
 }
 
 unsigned
@@ -393,8 +395,8 @@ delete_page (struct hash *pages, struct page *p) {
 void
 spt_des (struct hash_elem *e, void *aux) {
   const struct page *p = hash_entry (e, struct page, elem_hash);
-  vm_dealloc_page (p);
-  // free(p);
+  // vm_dealloc_page (p);
+  free(p);
 }
 
 void
