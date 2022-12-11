@@ -14,8 +14,7 @@ static void anon_destroy (struct page *page);
 
 /* project for 3 - start */
 struct bitmap *swap_table;
-const size_t SECTORS_PER_PAGE = PGSIZE / DISK_SECTOR_SIZE;
-
+const size_t SECTORS_PER_PAGE = PGSIZE / DISK_SECTOR_SIZE; // 256KB/512B -> 512
 /* project for 3 - end */
 
 /* DO NOT MODIFY this struct */
@@ -27,13 +26,14 @@ static const struct page_operations anon_ops = {
 };
 
 /* Initialize the data for anonymous pages */
+// anonymous page를 위한 data를 초기화함
 void
 vm_anon_init (void) {
 	/* TODO: Set up the swap_disk. */
-	swap_disk = disk_get(1,1);
+	swap_disk = disk_get(1,1); // swap disk를 받아줌
 
-	size_t swap_size = disk_size(swap_disk) / SECTORS_PER_PAGE;
-	swap_table = bitmap_create(swap_size);
+	size_t swap_size = disk_size(swap_disk) / SECTORS_PER_PAGE; // 할당된 swap_disk의 사이즈를 512로 나눔
+	swap_table = bitmap_create(swap_size); // swap_size에 맞는 bitmap을 만들어서 swap_table로 반환함
 }
 
 /* Initialize the file mapping */
