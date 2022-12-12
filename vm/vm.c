@@ -181,9 +181,9 @@ vm_get_frame (void) { // palloc으로 page를 얻고 frame을 가져옴
 /* Growing the stack. */
 static void
 vm_stack_growth (void *addr UNUSED) {
-  if (vm_alloc_page (VM_ANON | VM_MARKER_0, addr, 1)) {
-    vm_claim_page (addr);
-    thread_current ()->stack_bottom -= PGSIZE;
+  if (vm_alloc_page (VM_ANON | VM_MARKER_0, addr, 1)) { // 해당 addr를 이용하여 page를 할당 받고 거기서 성공했다면
+    vm_claim_page (addr); // claim_page를 통해서 연결해주고
+    thread_current ()->stack_bottom -= PGSIZE; // PGSIZE 만큼 늘었으니 stack_bottom을 PGSIZE 만큼 늘려줌
   }
 }
 
@@ -193,23 +193,21 @@ vm_handle_wp (struct page *page UNUSED) {}
 
 /* Return true on success */
 bool
-vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
-                     bool user UNUSED, bool write UNUSED,
-                     bool not_present UNUSED) {
+vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED, bool user UNUSED, bool write UNUSED, bool not_present UNUSED) {
   struct supplemental_page_table *spt UNUSED = &thread_current ()->spt;
   struct page *page = NULL;
   /* TODO: Validate the fault */
   /* TODO: Your code goes here */
-  if (is_kernel_vaddr (addr))
+  if (is_kernel_vaddr (addr)) // addr 를 먼저 check 해줌
     return false;
 
-  void *rsp_stack =
-      is_kernel_vaddr (f->rsp) ? thread_current ()->rsp_stack : f->rsp;
+  void *rsp_stack = is_kernel_vaddr (f->rsp) ? thread_current ()->rsp_stack : f->rsp; // f->rsp가 kernel address인지 확인하고 kernel이면 thread에 저장한걸 불러오고 user면 frame에 있는걸 그대로 사용
   if (not_present) {
     if (!vm_claim_page (addr)) {
-      if (rsp_stack - 8 <= addr && USER_STACK - 0x100000 <= addr &&
-          addr <= USER_STACK) {
-        vm_stack_growth (thread_current ()->stack_bottom - PGSIZE);
+      if (rsp_stack - 8 <= addr && USER_STACK - 0x100000 <= addr && addr <= USER_STACK) {
+        // rsp_stack - 8 --> 다음줄로 옮긴후 그 주소가 addr보다 작으면
+        // USER STACK 부터 1MB(GITBOOK에서 허용한 USER_STACK) 까지 이내에 addr가 존재하면
+        vm_stack_growth (thread_current ()->stack_bottom - PGSIZE); // stack을 더 키워줌
         return true;
       }
       return false;
@@ -268,69 +266,66 @@ supplemental_page_table_init (struct supplemental_page_table *spt UNUSED) {
 
 /* Copy supplemental page table from src to dst */
 bool
-supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
-                              struct supplemental_page_table *src UNUSED) {
+supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED, struct supplemental_page_table *src UNUSED) {
 
-  struct hash_iterator i;
+  struct hash_iterator i; // hash를 순회하기위해서 사용
 
-  hash_first (&i, &src->pages);
-  while (hash_next (&i)) {
-    struct page *parent_page =
-        hash_entry (hash_cur (&i), struct page, elem_hash);
-    enum vm_type type = page_get_type (parent_page);
+  hash_first (&i, &src->pages); // hash 순회를 위한 준비를 함 초기화와 비슷
+  while (hash_next (&i)) { // hash를 하나씩 next로 옮기면서 순회함
+    struct page *parent_page = hash_entry (hash_cur (&i), struct page, elem_hash); // input된 hash를 이용해서 page로 확장을 함
+    enum vm_type type = page_get_type (parent_page); // 해당 page의 정보를 전부 꺼내서 저장함
     void *upage = parent_page->va;
     bool writable = parent_page->writable;
 
     vm_initializer *init = parent_page->uninit.init;
 
-    struct container *child_aux =
-        (struct container *) malloc (sizeof (struct container));
+    struct container *child_aux = (struct container *) malloc (sizeof (struct container)); // 복사를 위한 child_aux를 선언해주고
 
-    struct container *aux = (struct container *) parent_page->uninit.aux;
+    struct container *aux = (struct container *) parent_page->uninit.aux; // 부모 aux를 사용하기 위하여 container로 연결
 
     if (child_aux == NULL)
       return false;
-    if (aux != NULL) {
+    if (aux != NULL) { // 부모의 aux를 child_aux의 container에 저장해줌
       child_aux->file = aux->file;
       child_aux->offset = aux->offset;
       child_aux->read_byte = aux->read_byte;
-
-      // void *aux = parent_page->uninit.aux;
     }
-    if (parent_page->operations->type == VM_UNINIT) {
-      ASSERT (child_aux != NULL);
-      if (!vm_alloc_page_with_initializer (type, upage, writable, init, (void *) child_aux))
-        return false;
-    } else if (parent_page->operations->type != VM_UNINIT) {
-        vm_alloc_page (type, upage, writable);
-        struct page *child_page = spt_find_page (&thread_current ()->spt, upage);
-        vm_claim_page (child_page->va);
-        // struct page *child_page = vm_claim_page(dst, upage);
+   
+    if (parent_page->uninit.type & VM_MARKER_0) { // 부모의 type 에 stack 이 check 되어있다면
+        setup_stack (&thread_current ()->tf); // lazy load가 아닌 바로 setup_stack으로 보내서 동작함
+      } else if (parent_page->operations->type == VM_UNINIT) { // type이 초기 상태이면
+        if (!vm_alloc_page_with_initializer (type, upage, writable, init, (void *) child_aux)) // vm_alloc을 이용하여 초기화하고 page를 할당받음
+          return false;
+      } else {
+        if (!vm_alloc_page (type, upage, writable)) // 초기 상태가 아닌 ANON 혹은 FILE type 이라면 vm_alloc_page로 page를 할당 받고
+          return false;
+        if (!vm_claim_page (upage)) // page를 할당하고 frame도 연결함
+          return false;
+      }
+
+      if (parent_page->operations->type != VM_UNINIT) { // 위 작업이 정상동작하였다면 type은 uninit이 아닐테니
+        struct page *child_page = spt_find_page (dst, upage); // child_page를 dst 에서 찾고
         if (child_page == NULL)
           return false;
-      memcpy (child_page->frame->kva, parent_page->frame->kva, PGSIZE);
-    }
+        memcpy (child_page->frame->kva, parent_page->frame->kva, PGSIZE); // parent page의 정보를 child page 에 복사해넣음
+      }
 
-    // if (parent_page->uninit.type & VM_MARKER_0) {
-    //     setup_stack (&thread_current ()->tf);
-    //   } else if (parent_page->operations->type == VM_UNINIT) {
-    //     if (!vm_alloc_page_with_initializer (type, upage, writable, init,
-    //                                          (void *) child_aux))
-    //       return false;
-    //   } else {
-    //     if (!vm_alloc_page (type, upage, writable))
-    //       return false;
-    //     if (!vm_claim_page (upage))
-    //       return false;
-    //   }
-
-    //   if (parent_page->operations->type != VM_UNINIT) {
-    //     struct page *child_page = spt_find_page (dst, upage);
+       // if (parent_page->operations->type == VM_UNINIT) {
+    //   ASSERT (child_aux != NULL);
+    //   if (!vm_alloc_page_with_initializer (type, upage, writable, init, (void *) child_aux))
+    //     return false;
+    // } else if (parent_page->operations->type != VM_UNINIT) {
+    //     vm_alloc_page (type, upage, writable);
+    //     struct page *child_page = spt_find_page (&thread_current ()->spt, upage);
+    //     vm_claim_page (child_page->va);
+    //     // struct page *child_page = vm_claim_page(dst, upage);
     //     if (child_page == NULL)
     //       return false;
-    //     memcpy (child_page->frame->kva, parent_page->frame->kva, PGSIZE);
-    //   }
+    //   memcpy (child_page->frame->kva, parent_page->frame->kva, PGSIZE);
+    // }
+
   }
+
   return true;
 }
 
@@ -345,13 +340,13 @@ supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
   while (hash_next (&i)) {
     struct page *page = hash_entry (hash_cur (&i), struct page, elem_hash);
 
-    if (page->operations->type == VM_FILE)
-      do_munmap (page->va);
+    if (page->operations->type == VM_FILE) // hash를 순회하면서 type이 VM_FILE 이라면
+      do_munmap (page->va); // 내부를 전부 munmap 해서 data를 free 해버리고
 
     // free(page);
   }
   // hash_destroy(&spt->pages, spt_des);
-  hash_clear (&spt->pages, spt_des);
+  hash_clear (&spt->pages, spt_des); // clear를 통해서 hash_table을 날려버림
 }
 
 unsigned
@@ -390,7 +385,7 @@ void
 spt_des (struct hash_elem *e, void *aux) {
   const struct page *p = hash_entry (e, struct page, elem_hash);
   // vm_dealloc_page (p);
-  free (p);
+  free (p); // input된 e를 확장해서 page를 free 함
 }
 
 void

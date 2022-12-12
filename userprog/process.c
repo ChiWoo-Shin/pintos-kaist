@@ -777,23 +777,23 @@ install_page (void *upage, void *kpage, bool writable) {
 }
 
 bool
-lazy_load_segment (struct page *page, void *aux) {
+lazy_load_segment (struct page *page, void *aux) { // 실행 파일로부터 segment 가 load 됨
   /* TODO: Load the segment from the file */
   /* TODO: This called when the first page fault occurs on address VA. */
   /* TODO: VA is available when calling this function. */
-  struct file *file = ((struct container *)aux) ->file;
+  struct file *file = ((struct container *)aux) ->file; // 앞에서 aux에 container를 넣어서 정보를 옮겨받았으니 다시 분해해서 넣어줌
   off_t aux_offset = ((struct container *)aux)->offset;
   size_t aux_read_byte = ((struct container *)aux)->read_byte;
 
-  size_t page_zero_byte = PGSIZE - aux_read_byte;
+  size_t page_zero_byte = PGSIZE - aux_read_byte; // zero_byte 도 계산해주고
 
-  file_seek(file, aux_offset);
+  file_seek(file, aux_offset); // file_seek를 통해서 file의 읽기를 시작할 부분으로 offset 만큼 이동 시켜줌
 
-  if(file_read(file, page->frame->kva, aux_read_byte) != (int)aux_read_byte){
-    palloc_free_page(page->frame->kva);
+  if(file_read(file, page->frame->kva, aux_read_byte) != (int)aux_read_byte){ // kva에서 file을 aux_read_byte 만큼 읽은 크기가 input된 aux_read_byte의 크기랑 동일하지 않다면 --> 읽은게 이상하다
+    palloc_free_page(page->frame->kva); // 해당 page free 해버림
     return false;
   }
-  memset(page->frame->kva + aux_read_byte, 0, page_zero_byte);
+  memset(page->frame->kva + aux_read_byte, 0, page_zero_byte); // 잘 읽어왔다면 버퍼에 read_byte를 더한 공간을 page_zero_byte 만큼 0으로 채워넣어줌
 
   return true;
 }
@@ -818,32 +818,31 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage, uint32_t read_bytes,
   ASSERT (pg_ofs (upage) == 0);
   ASSERT (ofs % PGSIZE == 0);
 
-  while (read_bytes > 0 || zero_bytes > 0) {
+  while (read_bytes > 0 || zero_bytes > 0) { // read byte 혹은 zero byte가 0보다 크다  == 읽어야할 무언가가 있다
     /* Do calculate how to fill this page.
      * We will read PAGE_READ_BYTES bytes from FILE
      * and zero the final PAGE_ZERO_BYTES bytes. */
-    size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
-    size_t page_zero_bytes = PGSIZE - page_read_bytes;
+    size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE; // read byte가 PGSIZE보다 작으면 read byte를 크다면 PGSIZE를 사용 --> 둘중 작은걸 사용하고
+    size_t page_zero_bytes = PGSIZE - page_read_bytes; // zero byte = PGSIZE - read byte 임 GITBOOK 에서 read byte + zero byte ==PGSIZE 라는 내용이 나옴
 
     /* project for 3 - start */
-    struct container *container = (struct container *)malloc(sizeof(struct container));
-    container->file = file;
-    container->offset = ofs;
-    container->read_byte = page_read_bytes;
+    struct container *container = (struct container *)malloc(sizeof(struct container)); // load에 필요한 데이터를 운반하는 container
+    container->file = file; // file을 저장하는 container가 있고
+    container->offset = ofs; // offset 을 저장
+    container->read_byte = page_read_bytes; // read byte를 저장
     
     /* project for 3 - end */
 
     /* TODO: Set up aux to pass information to the lazy_load_segment. */
     // void *aux = NULL;
-    if (!vm_alloc_page_with_initializer (VM_ANON, upage, writable,
-                                         lazy_load_segment, container))
+    if (!vm_alloc_page_with_initializer (VM_ANON, upage, writable, lazy_load_segment, container)) // vm_alloc_page_with_initializer를 통해서 할당받은 page를 초기화함
       return false;
 
     /* Advance. */
-    read_bytes -= page_read_bytes;
-    zero_bytes -= page_zero_bytes;
-    upage += PGSIZE;
-    ofs += page_read_bytes;
+    read_bytes -= page_read_bytes; // page 단위로 위에서 할당을 받았기 때문에 받은만큼 계속 while이 돌면서 빼줌 -- 내가 읽은 만큼 빼줌
+    zero_bytes -= page_zero_bytes; // zero 도 위와 동일
+    upage += PGSIZE; // upage는 PGSIZE로 읽으니 PGSIZE로 이동함
+    ofs += page_read_bytes; // 내가 읽은 만큼 ofs를 이동 --> 그 다음부터 읽는다
   }
   return true;
 }
@@ -852,19 +851,19 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage, uint32_t read_bytes,
 bool
 setup_stack (struct intr_frame *if_) {
   bool success = false;
-  void *stack_bottom = (void *) (((uint8_t *) USER_STACK) - PGSIZE);
+  void *stack_bottom = (void *) (((uint8_t *) USER_STACK) - PGSIZE); // stack bottom은 USER_STACK에서 PGSIZE를 빼서 bottom을 맞춤
 
   /* TODO: Map the stack on stack_bottom and claim the page immediately.
    * TODO: If success, set the rsp accordingly.
    * TODO: You should mark the page is stack. */
   /* TODO: Your code goes here */
 
-if(vm_alloc_page(VM_ANON|VM_MARKER_0, stack_bottom, 1)){
-    success = vm_claim_page(stack_bottom);
+if(vm_alloc_page(VM_ANON|VM_MARKER_0, stack_bottom, 1)){ // page를 할당을 하는데 VM_ANON 이고 VM_MARKER_0(스택 체크) 으로 비트 마스킹을 하고 위에서 얻은 stack_bottom과 writable 정보로 page를 할당받음
+    success = vm_claim_page(stack_bottom); // 위에서 성공하면 해당 stack_bottom 정보로 vm_claim_page를 동작해서 page와 frame을 할당
 
-    if(success){
-      if_->rsp = USER_STACK;
-      thread_current()->stack_bottom = stack_bottom;
+    if(success){ // 만약 성공했다면
+      if_->rsp = USER_STACK; // frame의 rsp를 USER_STACK으로 고정해주고
+      thread_current()->stack_bottom = stack_bottom; // thread의 구조체인 stack_bottom에 stack_bottom을 넣어줌
     }
   }
 

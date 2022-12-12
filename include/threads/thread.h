@@ -129,8 +129,8 @@ struct thread {
 #ifdef VM
   /* Table for whole virtual memory owned by thread. */
   struct supplemental_page_table spt;
-  void *stack_bottom;
-  void *rsp_stack;
+  void *stack_bottom; // setup stack에서 bottom의 정보를 가지고 있기위해서 너놓음
+  void *rsp_stack; // stack이 가득 찼을때 움직이면서 공간을 더 확보하기 위함이자 page_fault를 통해서 얻은 rsp는 이미 기록이 되어있지만 유저에서 죽지 않고 kernel에서 죽으면 알수가 없음 그래서 kernel의 rsp도 기억하기 위한 공간
 #endif
 
   /* Owned by thread.c. */
